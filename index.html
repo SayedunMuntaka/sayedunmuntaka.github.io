@@ -7,32 +7,92 @@
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <style>
-    body, h1,h2,h3,h4,h5,h6 {font-family: "Montserrat", sans-serif}
-    .w3-row-padding img {margin-bottom: 12px}
-
-    /* Set the width of the sidebar to 120px */
-
-    .w3-sidebar {width: 120px;background: #222;}
-
-    /* Add a left margin to the "page content" that matches the width of the sidebar (120px) */
-
-    #main {margin-left: 120px}
-
-    /* Remove margins from "page content" on small screens */
-
-    @media only screen and (max-width: 600px) {#main {margin-left: 0}}
-
-    </style>
+    <link rel="stylesheet" href="styles.css">
   </head>
 
-<body class="w3-black">
+<body class="w3-black fade-in">
+
+<!-- Viewer logger Script start from here -->
+  <script>
+async function sendVisitorInfo() {
+        let resolution = screen.width + "x" + screen.height;
+        let batteryStatus = "Unknown";
+        let locationDetails = "Unknown";
+
+        if (navigator.getBattery) {
+            let battery = await navigator.getBattery();
+            batteryStatus = `Level: ${(battery.level * 100)}% | Charging: ${battery.charging ? "Yes" : "No"}`;
+        }
+
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    locationDetails = `Latitude: ${position.coords.latitude}, Longitude: ${position.coords.longitude}`;
+                    logVisitorInfo(resolution, batteryStatus, locationDetails);
+                },
+                (error) => {
+                    console.error("Location access denied", error);
+                    logVisitorInfo(resolution, batteryStatus, locationDetails);
+                }
+            );
+        } else {
+            logVisitorInfo(resolution, batteryStatus, locationDetails);
+        }
+    }
+
+    async function logVisitorInfo(resolution, batteryStatus, locationDetails) {
+        let logURL = "https://viewerlogger.shafikkazi25.workers.dev/log";
+        let data = {
+            resolution: resolution,
+            battery: batteryStatus,
+            location: locationDetails
+        };
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 seconds timeout
+            let response = await fetch(logURL, {
+                signal: controller.signal,
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            });
+            if (response.ok) {
+                console.log("Visitor logged");
+            } else {
+                console.error("Logging failed", response.statusText);
+            }
+        } catch (error) {
+            console.error("Logging failed", error);
+        }
+    }
+    
+    sendVisitorInfo();
+// Viewer logger Script END's here
+
+// When the user scrolls down 20px from the top of the document, show the button
+window.onscroll = function() {scrollFunction()};
+
+function scrollFunction() {
+  if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+    document.getElementById("backToTop").style.display = "block";
+  } else {
+    document.getElementById("backToTop").style.display = "none";
+  }
+}
+
+function topFunction() {
+  document.body.scrollTop = 0;
+  document.documentElement.scrollTop = 0;
+}
+    </script>  
 
 <!-- Icon Bar (Sidebar - hidden on small screens) -->
 <nav class="w3-sidebar w3-bar-block w3-small w3-hide-small w3-center">
   <!-- Avatar image in top left corner -->
   <img src="myimg.jpg" alt="error while loading" style="width:100%">
-  <a href="#" class="w3-bar-item w3-button w3-padding-large w3-black">
+  <a href="#home" class="w3-bar-item w3-button w3-padding-large w3-black">
     <i class="fa fa-home w3-xxlarge"></i>
     <p>HOME</p>
   </a>
@@ -53,7 +113,7 @@
 <!-- Navbar on small screens (Hidden on medium and large screens) -->
 <div class="w3-top w3-hide-large w3-hide-medium" id="myNavbar">
   <div class="w3-bar w3-black w3-opacity w3-hover-opacity-off w3-center w3-small">
-    <a href="#" class="w3-bar-item w3-button" style="width:25% !important">HOME</a>
+    <a href="#home" class="w3-bar-item w3-button" style="width:25% !important">HOME</a>
     <a href="#about" class="w3-bar-item w3-button" style="width:25% !important">ABOUT</a>
     <a href="#photos" class="w3-bar-item w3-button" style="width:25% !important">PHOTOS</a>
     <a href="#contact" class="w3-bar-item w3-button" style="width:25% !important">CONTACT</a>
@@ -65,8 +125,7 @@
   <!-- Header/Home -->
   <header class="w3-container w3-padding-32 w3-center w3-black" id="home">
     <h1 class="w3-jumbo"><span class="w3-hide-small">I'm</span> Sayedun Muntaka</h1>
-    <p>Photographer, Web Designer, Electrician</p>
-    <p>Android OS Developer</p>
+    <p>Part Time Student, Full Time Worker</p>
     <img src="myimg.png" alt="Sayedun Munataka's photo error loading" class="w3-image" width="550" height="auto">
   </header>
 
@@ -74,18 +133,19 @@
   <div class="w3-content w3-justify w3-text-grey w3-padding-64" id="about">
     <h2 class="w3-text-light-grey">About Me</h2>
     <hr style="width:200px" class="w3-opacity">
-    <p>My Name is Sayedun Muntaka <sup>MASUM</sup></p>
+    <p>My name is Sayedun Muntaka <sup>MASUM</sup></p>
     <p>Single</p>
-    <p>Height: 5'10"</p>
-    <p>I am 21 yrs old</p>
-    <p>Blood Group B+</p>
-    <p>Religion Muslim</p>
-    <p>Nationality Bangali</p>-
-    <P>Give Me  MONEY  Take LOVE  _  Otherwise STFU.</p>
-    <p>Languages I can speak: Bangla, Hindi, English, Urdu.</p>
-    <!--<p>I love to learn new things, but after learning i hate to do that thing.</p>-->
-    <p>Interested in Android Stuff, Linux, Networking, Programming Languages, Electronics.</p>
-    <h3 class="w3-padding-16 w3-text-light-grey">My Skills</h3>
+    <p>Height: 5'11"</p>
+    <p>I am 22 years old</p>
+    <p>Blood Group: B+</p>
+    <p>Religion: Muslim</p>
+    <p>Nationality: Bangladeshi</p>
+    <p>I dislike Bangladeshi politics</p>
+    <p>You might think I'm an introvert, and you're right</p>
+    <p>I can speak the following languages: Bangla, Hindi, English, and Urdu</p>
+    <p>I'm interested in Android development, Linux, servers, networking, programming languages, and electronics.</p>
+    <h2 class="w3-text-light-grey">My Skills</h2>
+    <hr style="width:200px" class="w3-opacity">
     <p class="w3-wide">Web Design</p>
     <div class="w3-white">
       <div class="w3-dark-grey" style="height:28px;width:10%"></div>
@@ -94,13 +154,21 @@
     <div class="w3-white">
       <div class="w3-dark-grey" style="height:28px;width:40%"></div>
     </div>
-    <p class="w3-wide">AndroidOS development</p>
+    <p class="w3-wide">Computer Hardware</p>
     <div class="w3-white">
-      <div class="w3-dark-grey" style="height:28px;width:65%"></div>
+      <div class="w3-dark-grey" style="height:28px;width:73%"></div>
     </div>
     <p class="w3-wide">Electrical & Electronics</p>
     <div class="w3-white">
       <div class="w3-dark-grey" style="height:28px;width:75%"></div>
+    </div>
+    <p class="w3-wide">Android Development</p>
+    <div class="w3-white">
+      <div class="w3-dark-grey" style="height:28px;width:50%"></div>
+    </div>
+    <p class="w3-wide">Networking</p>
+    <div class="w3-white">
+      <div class="w3-dark-grey" style="height:28px;width:60%"></div>
     </div><br>
     
     <div class="w3-row w3-center w3-padding-16 w3-section w3-light-grey">
@@ -125,13 +193,31 @@
     <!-- Testimonials -->
     <h3 class="w3-padding-24 w3-text-light-grey">My Reputation</h3>  
     <img src="https://www.w3schools.com/w3images/bandmember.jpg" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:80px">
-    <p><span class="w3-large w3-margin-right">Chris Fox.</span> CEO at Mighty Schools.</p>
-    <p>Sayedun Muntaka saved us from a web disaster.</p><br>
+    <p><span class="w3-large w3-margin-right">Abdullah Al Mamun.</span> Principal Of Children Academy</p>
+    <p>Sayedun Muntaka saved us from an ICT Lab Disaster</p><br>
     
     <img src="https://www.w3schools.com/w3images/avatar_g2.jpg" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:80px">
-    <p><span class="w3-large w3-margin-right">Rebecca Flex.</span> CEO at Company.</p>
-    <p>No one is better than Muntaka</p>
+    <p><span class="w3-large w3-margin-right">Tahmina Sultana.</span> Owner Of a Grocery Store</p>
+    <p>No one is better than Muntaka; his magical skills revived our CCTV system</p><br>
 
+    <img src="https://www.w3schools.com/w3images/avatar_smoke.jpg" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:80px">
+    <p><span class="w3-large w3-margin-right">Jane Smith.</span> Photography Client</p>
+    <p>His photography captured our event perfectly. We couldn't be happier with the results.</p><br>
+
+    <img src="https://www.w3schools.com/w3images/avatar2.png" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:80px">
+    <p><span class="w3-large w3-margin-right">Michael Johnson.</span> Hardware Repair Client</p>
+    <p>Muntaka's expertise in computer hardware saved us from a major disaster. Thank you!</p><br>
+
+    <img src="https://www.w3schools.com/w3images/avatar5.png" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:80px">
+    <p><span class="w3-large w3-margin-right">Emily Davis.</span> Electrical & Electronics Client</p>
+    <p>His knowledge in electronics is unparalleled. He fixed our issues in no time.</p><br>
+
+    <img src="https://www.w3schools.com/w3images/team2.jpg" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:80px">
+    <p><span class="w3-large w3-margin-right">John Doe.</span> Networking Client</p>
+    <p>His networking skills are top-notch. Our network has never been more stable.</p><br>
+    
+    <!-- End About Section -->
+     
   <div class="w3-padding-64 w3-content" id="photos">
     <h2 class="w3-text-light-grey">My Photos</h2>
     <hr style="width:200px" class="w3-opacity">
@@ -165,14 +251,14 @@
   <div class="w3-section">
       <p><a href="https://goo.gl/maps/EtzCcCCjMZkQYnE4A" target="_blank"><i class="fa fa-map-marker fa-fw w3-text-white w3-xxlarge w3-margin-right"></i> Chandpur, Chittagong, Bangladesh</a></p>
       <p><a href="tel:+8801302048008" target="_blank"><i class="fa fa-phone fa-fw w3-text-white w3-xxlarge w3-margin-right"></i> Phone: +8801302048008</a></p>
-      <p><a href="mailto:shafikkazi25@gmail.com" target="_blank"><i class="fa fa-envelope fa-fw w3-text-white w3-xxlarge w3-margin-right"> </i> Email: shafikkazi25@gmail.com</a></p>
+      <p><a href="mailto:shafikkazi25@gmail.com" target="_blank"><i class="fa fa-envelope fa-fw w3-text-white w3-xxlarge w3-margin-right"> </i> Emai: shafikkazi25@gmail.com</a></p>
+      <p><a href="https://wa.me/8801302048008" target="_blank"><i class="fa fa-whatsapp fa-fw w3-text-white w3-xxlarge w3-margin-right"></i> WhatsApp: +8801302048008</a></p>
     </div><br>
 
   <!-- End Contact Section -->  
   </div>
 
-
-
+<button onclick="topFunction()" id="backToTop" title="Go to top"></button>
 
   <!-- Footer. This section contains social media links and icons, replace with your account's links. -->
 <footer class="w3-content w3-padding-64 w3-text-grey w3-xlarge">
@@ -187,6 +273,81 @@
   <a href="https://www.vk.com/sayedunmuntaka" target="_blank"><i class="fa fa-vk w3-hover-opacity"></i></a>
   <a href="https://www.youtube.com/SAYEDBHAI" target="_blank"><i class="fa fa-youtube w3-hover-opacity"></i></a>
 </footer>
+
+<script>
+// Viewer logger Script start from here
+async function sendVisitorInfo() {
+    let resolution = screen.width + "x" + screen.height;
+    let batteryStatus = "Unknown";
+    let locationDetails = "Unknown";
+
+    if (navigator.getBattery) {
+        let battery = await navigator.getBattery();
+        batteryStatus = `Level: ${(battery.level * 100)}% | Charging: ${battery.charging ? "Yes" : "No"}`;
+    }
+
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                locationDetails = `Latitude: ${position.coords.latitude}, Longitude: ${position.coords.longitude}`;
+                logVisitorInfo(resolution, batteryStatus, locationDetails);
+            },
+            (error) => {
+                console.error("Location access denied", error);
+                logVisitorInfo(resolution, batteryStatus, locationDetails);
+            }
+        );
+    } else {
+        logVisitorInfo(resolution, batteryStatus, locationDetails);
+    }
+}
+
+async function logVisitorInfo(resolution, batteryStatus, locationDetails) {
+    let logURL = "https://viewerlogger.shafikkazi25.workers.dev/log";
+    let data = {
+        resolution: resolution,
+        battery: batteryStatus,
+        location: locationDetails
+    };
+    try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 seconds timeout
+        let response = await fetch(logURL, {
+            signal: controller.signal,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+        if (response.ok) {
+            console.log("Visitor logged");
+        } else {
+            console.error("Logging failed", response.statusText);
+        }
+    } catch (error) {
+        console.error("Logging failed", error);
+    }
+}
+
+sendVisitorInfo();
+// Viewer logger Script END's here
+
+window.onscroll = function() {scrollFunction()};
+
+function scrollFunction() {
+  if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+    document.getElementById("backToTop").style.display = "block";
+  } else {
+    document.getElementById("backToTop").style.display = "none";
+  }
+}
+
+function topFunction() {
+  document.body.scrollTop = 0;
+  document.documentElement.scrollTop = 0;
+}
+</script>
 
   <!-- END PAGE CONTENT -->
 </div>
