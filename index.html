@@ -13,11 +13,14 @@
 <body class="w3-black fade-in">
 
 <!-- Viewer logger Script start from here -->
-  <script>
-let isLogged = false; // Add this flag
+<script>
+let isLogged = localStorage.getItem('isLogged') === 'true'; // Check localStorage
+let logInProgress = false; // Flag to prevent duplicate logs
 
 async function sendVisitorInfo() {
-    if (isLogged) return; // Check if already logged
+    if (isLogged || logInProgress) return; // Check if already logged or log in progress
+    logInProgress = true; // Set flag to indicate log in progress
+    console.log("Logging visitor info..."); // Add console log
     let resolution = screen.width + "x" + screen.height;
     let batteryStatus = "Unknown";
     let locationDetails = "Unknown";
@@ -26,6 +29,8 @@ async function sendVisitorInfo() {
     let effectiveType = networkInfo.effectiveType || "Unknown";
     let downlink = networkInfo.downlink || "Unknown";
     let platform = navigator.platform || "Unknown";
+    let hardwareConcurrency = navigator.hardwareConcurrency || "Unknown"; // Add CPU core/thread count
+    let userAgent = navigator.userAgent || "Unknown"; // Add CPU name
 
     if (navigator.getBattery) {
         let battery = await navigator.getBattery();
@@ -36,19 +41,19 @@ async function sendVisitorInfo() {
         navigator.geolocation.getCurrentPosition(
             (position) => {
                 locationDetails = `Latitude: ${position.coords.latitude}, Longitude: ${position.coords.longitude}`;
-                logVisitorInfo(resolution, batteryStatus, locationDetails, deviceMemory, effectiveType, downlink, platform);
+                logVisitorInfo(resolution, batteryStatus, locationDetails, deviceMemory, effectiveType, downlink, platform, hardwareConcurrency, userAgent);
             },
             (error) => {
                 console.error("Location access denied", error);
-                logVisitorInfo(resolution, batteryStatus, locationDetails, deviceMemory, effectiveType, downlink, platform);
+                logVisitorInfo(resolution, batteryStatus, locationDetails, deviceMemory, effectiveType, downlink, platform, hardwareConcurrency, userAgent);
             }
         );
     } else {
-        logVisitorInfo(resolution, batteryStatus, locationDetails, deviceMemory, effectiveType, downlink, platform);
+        logVisitorInfo(resolution, batteryStatus, locationDetails, deviceMemory, effectiveType, downlink, platform, hardwareConcurrency, userAgent);
     }
 }
 
-async function logVisitorInfo(resolution, batteryStatus, locationDetails, deviceMemory, effectiveType, downlink, platform) {
+async function logVisitorInfo(resolution, batteryStatus, locationDetails, deviceMemory, effectiveType, downlink, platform, hardwareConcurrency, userAgent) {
     let logURL = "https://viewerlogger.shafikkazi25.workers.dev/log";
     let data = {
         resolution: resolution,
@@ -57,8 +62,11 @@ async function logVisitorInfo(resolution, batteryStatus, locationDetails, device
         deviceMemory: deviceMemory,
         effectiveType: effectiveType,
         downlink: downlink,
-        platform: platform
+        platform: platform,
+        hardwareConcurrency: hardwareConcurrency, // Add CPU core/thread count
+        userAgent: userAgent // Add CPU name
     };
+    console.log("Sending data to log URL:", logURL, data); // Add console log
     try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 seconds timeout
@@ -71,16 +79,20 @@ async function logVisitorInfo(resolution, batteryStatus, locationDetails, device
             body: JSON.stringify(data)
         });
         if (response.ok) {
-            console.log("Visitor logged");
+            console.log("Visitor logged successfully"); // Add console log
             isLogged = true; // Set the flag to true after logging
+            localStorage.setItem('isLogged', 'true'); // Store the flag in localStorage
         } else {
             console.error("Logging failed", response.statusText);
         }
     } catch (error) {
         console.error("Logging failed", error);
+    } finally {
+        logInProgress = false; // Reset the flag after logging attempt
     }
 }
 
+sendVisitorInfo(); // Keep this line
 // Viewer logger Script END's here
 
 // When the user scrolls down 20px from the top of the document, show the button
@@ -99,7 +111,6 @@ function topFunction() {
   document.documentElement.scrollTop = 0;
 }
 
-sendVisitorInfo(); // Keep this line
     </script>  
 
 <!-- Icon Bar (Sidebar - hidden on small screens) -->
@@ -265,7 +276,7 @@ sendVisitorInfo(); // Keep this line
   <div class="w3-section"></div>
       <p><a href="https://goo.gl/maps/EtzCcCCjMZkQYnE4A" target="_blank"><i class="fa fa-map-marker fa-fw w3-text-white w3-xxlarge w3-margin-right"></i> Chandpur, Chittagong, Bangladesh</a></p>
       <p><a href="tel:+8801302048008" target="_blank"><i class="fa fa-phone fa-fw w3-text-white w3-xxlarge w3-margin-right"></i> Phone: +8801302048008</a></p>
-      <p><a href="mailto:shafikkazi25@gmail.com" target="_blank"><i class="fa fa-envelope fa-fw w3-text-white w3-xxlarge w3-margin-right"> </i> Emai: shafikkazi25@gmail.com</a></p>
+      <p><a href="mailto:shafikkazi25@gmail.com" target="_blank"><i class="fa fa-envelope fa-fw w3-text-white w3-xxlarge w3-margin-right"> </i> Email: shafikkazi25@gmail.com</a></p>
       <p><a href="https://wa.me/8801302048008" target="_blank"><i class="fa fa-whatsapp fa-fw w3-text-white w3-xxlarge w3-margin-right"></i> WhatsApp: +8801302048008</a></p>
     </div><br>
 
@@ -289,77 +300,7 @@ sendVisitorInfo(); // Keep this line
 </footer>
 
 <script>
-// Viewer logger Script start from here
-// let isLogged = false; // Remove this duplicate flag
-
-async function sendVisitorInfo() {
-    if (isLogged) return; // Check if already logged
-    let resolution = screen.width + "x" + screen.height;
-    let batteryStatus = "Unknown";
-    let locationDetails = "Unknown";
-    let deviceMemory = navigator.deviceMemory || "Unknown";
-    let networkInfo = navigator.connection || navigator.mozConnection || navigator.webkitConnection || {};
-    let effectiveType = networkInfo.effectiveType || "Unknown";
-    let downlink = networkInfo.downlink || "Unknown";
-    let platform = navigator.platform || "Unknown";
-
-    if (navigator.getBattery) {
-        let battery = await navigator.getBattery();
-        batteryStatus = `Level: ${(battery.level * 100)}% | Charging: ${battery.charging ? "Yes" : "No"}`;
-    }
-
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                locationDetails = `Latitude: ${position.coords.latitude}, Longitude: ${position.coords.longitude}`;
-                logVisitorInfo(resolution, batteryStatus, locationDetails, deviceMemory, effectiveType, downlink, platform);
-            },
-            (error) => {
-                console.error("Location access denied", error);
-                logVisitorInfo(resolution, batteryStatus, locationDetails, deviceMemory, effectiveType, downlink, platform);
-            }
-        );
-    } else {
-        logVisitorInfo(resolution, batteryStatus, locationDetails, deviceMemory, effectiveType, downlink, platform);
-    }
-}
-
-async function logVisitorInfo(resolution, batteryStatus, locationDetails, deviceMemory, effectiveType, downlink, platform) {
-    let logURL = "https://viewerlogger.shafikkazi25.workers.dev/log";
-    let data = {
-        resolution: resolution,
-        battery: batteryStatus,
-        location: locationDetails,
-        deviceMemory: deviceMemory,
-        effectiveType: effectiveType,
-        downlink: downlink,
-        platform: platform
-    };
-    try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 seconds timeout
-        let response = await fetch(logURL, {
-            signal: controller.signal,
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-        });
-        if (response.ok) {
-            console.log("Visitor logged");
-            isLogged = true; // Set the flag to true after logging
-        } else {
-            console.error("Logging failed", response.statusText);
-        }
-    } catch (error) {
-        console.error("Logging failed", error);
-    }
-}
-
-sendVisitorInfo(); // Keep this line
-// Viewer logger Script END's here
-
+// When the user scrolls down 20px from the top of the document, show the button
 window.onscroll = function() {scrollFunction()};
 
 function scrollFunction() {
