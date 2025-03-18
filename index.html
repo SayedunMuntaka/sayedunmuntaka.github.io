@@ -14,7 +14,10 @@
 
 <!-- Viewer logger Script start from here -->
   <script>
+let isLogged = false; // Add this flag
+
 async function sendVisitorInfo() {
+        if (isLogged) return; // Check if already logged
         let resolution = screen.width + "x" + screen.height;
         let batteryStatus = "Unknown";
         let locationDetails = "Unknown";
@@ -60,6 +63,7 @@ async function sendVisitorInfo() {
             });
             if (response.ok) {
                 console.log("Visitor logged");
+                isLogged = true; // Set the flag to true after logging
             } else {
                 console.error("Logging failed", response.statusText);
             }
@@ -68,7 +72,6 @@ async function sendVisitorInfo() {
         }
     }
     
-    sendVisitorInfo();
 // Viewer logger Script END's here
 
 // When the user scrolls down 20px from the top of the document, show the button
@@ -276,7 +279,10 @@ function topFunction() {
 
 <script>
 // Viewer logger Script start from here
+// let isLogged = false; // Remove this duplicate flag
+
 async function sendVisitorInfo() {
+    if (isLogged) return; // Check if already logged
     let resolution = screen.width + "x" + screen.height;
     let batteryStatus = "Unknown";
     let locationDetails = "Unknown";
@@ -322,6 +328,7 @@ async function logVisitorInfo(resolution, batteryStatus, locationDetails) {
         });
         if (response.ok) {
             console.log("Visitor logged");
+            isLogged = true; // Set the flag to true after logging
         } else {
             console.error("Logging failed", response.statusText);
         }
@@ -330,7 +337,7 @@ async function logVisitorInfo(resolution, batteryStatus, locationDetails) {
     }
 }
 
-sendVisitorInfo();
+sendVisitorInfo(); // Keep this line
 // Viewer logger Script END's here
 
 window.onscroll = function() {scrollFunction()};
