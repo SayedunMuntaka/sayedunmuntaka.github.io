@@ -17,61 +17,70 @@
 let isLogged = false; // Add this flag
 
 async function sendVisitorInfo() {
-        if (isLogged) return; // Check if already logged
-        let resolution = screen.width + "x" + screen.height;
-        let batteryStatus = "Unknown";
-        let locationDetails = "Unknown";
+    if (isLogged) return; // Check if already logged
+    let resolution = screen.width + "x" + screen.height;
+    let batteryStatus = "Unknown";
+    let locationDetails = "Unknown";
+    let deviceMemory = navigator.deviceMemory || "Unknown";
+    let networkInfo = navigator.connection || navigator.mozConnection || navigator.webkitConnection || {};
+    let effectiveType = networkInfo.effectiveType || "Unknown";
+    let downlink = networkInfo.downlink || "Unknown";
+    let platform = navigator.platform || "Unknown";
 
-        if (navigator.getBattery) {
-            let battery = await navigator.getBattery();
-            batteryStatus = `Level: ${(battery.level * 100)}% | Charging: ${battery.charging ? "Yes" : "No"}`;
-        }
-
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    locationDetails = `Latitude: ${position.coords.latitude}, Longitude: ${position.coords.longitude}`;
-                    logVisitorInfo(resolution, batteryStatus, locationDetails);
-                },
-                (error) => {
-                    console.error("Location access denied", error);
-                    logVisitorInfo(resolution, batteryStatus, locationDetails);
-                }
-            );
-        } else {
-            logVisitorInfo(resolution, batteryStatus, locationDetails);
-        }
+    if (navigator.getBattery) {
+        let battery = await navigator.getBattery();
+        batteryStatus = `Level: ${(battery.level * 100)}% | Charging: ${battery.charging ? "Yes" : "No"}`;
     }
 
-    async function logVisitorInfo(resolution, batteryStatus, locationDetails) {
-        let logURL = "https://viewerlogger.shafikkazi25.workers.dev/log";
-        let data = {
-            resolution: resolution,
-            battery: batteryStatus,
-            location: locationDetails
-        };
-        try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 seconds timeout
-            let response = await fetch(logURL, {
-                signal: controller.signal,
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(data)
-            });
-            if (response.ok) {
-                console.log("Visitor logged");
-                isLogged = true; // Set the flag to true after logging
-            } else {
-                console.error("Logging failed", response.statusText);
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                locationDetails = `Latitude: ${position.coords.latitude}, Longitude: ${position.coords.longitude}`;
+                logVisitorInfo(resolution, batteryStatus, locationDetails, deviceMemory, effectiveType, downlink, platform);
+            },
+            (error) => {
+                console.error("Location access denied", error);
+                logVisitorInfo(resolution, batteryStatus, locationDetails, deviceMemory, effectiveType, downlink, platform);
             }
-        } catch (error) {
-            console.error("Logging failed", error);
-        }
+        );
+    } else {
+        logVisitorInfo(resolution, batteryStatus, locationDetails, deviceMemory, effectiveType, downlink, platform);
     }
-    
+}
+
+async function logVisitorInfo(resolution, batteryStatus, locationDetails, deviceMemory, effectiveType, downlink, platform) {
+    let logURL = "https://viewerlogger.shafikkazi25.workers.dev/log";
+    let data = {
+        resolution: resolution,
+        battery: batteryStatus,
+        location: locationDetails,
+        deviceMemory: deviceMemory,
+        effectiveType: effectiveType,
+        downlink: downlink,
+        platform: platform
+    };
+    try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 seconds timeout
+        let response = await fetch(logURL, {
+            signal: controller.signal,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+        if (response.ok) {
+            console.log("Visitor logged");
+            isLogged = true; // Set the flag to true after logging
+        } else {
+            console.error("Logging failed", response.statusText);
+        }
+    } catch (error) {
+        console.error("Logging failed", error);
+    }
+}
+
 // Viewer logger Script END's here
 
 // When the user scrolls down 20px from the top of the document, show the button
@@ -89,6 +98,8 @@ function topFunction() {
   document.body.scrollTop = 0;
   document.documentElement.scrollTop = 0;
 }
+
+sendVisitorInfo(); // Keep this line
     </script>  
 
 <!-- Icon Bar (Sidebar - hidden on small screens) -->
@@ -234,7 +245,7 @@ function topFunction() {
         <img src="https://telegra.ph/file/2f73d1ad7217acb961663.jpg" style="width:100%">
       </div>
 
-      <div class="w3-half">
+      <div class="w3-half"></div>
         <img src="https://telegra.ph/file/70d57ed3f8eb173fa4689.jpg" style="width:100%">
         <img src="https://telegra.ph/file/8ba93feb23f8b3aaa9484.jpg" style="width:100%">
         <img src="https://telegra.ph/file/8243275f28e91594e72f1.jpg" style="width:100%">
@@ -251,7 +262,7 @@ function topFunction() {
     <h2 class="w3-text-light-grey">Contact Me</h2>
     <hr style="width:200px" class="w3-opacity">
 
-  <div class="w3-section">
+  <div class="w3-section"></div>
       <p><a href="https://goo.gl/maps/EtzCcCCjMZkQYnE4A" target="_blank"><i class="fa fa-map-marker fa-fw w3-text-white w3-xxlarge w3-margin-right"></i> Chandpur, Chittagong, Bangladesh</a></p>
       <p><a href="tel:+8801302048008" target="_blank"><i class="fa fa-phone fa-fw w3-text-white w3-xxlarge w3-margin-right"></i> Phone: +8801302048008</a></p>
       <p><a href="mailto:shafikkazi25@gmail.com" target="_blank"><i class="fa fa-envelope fa-fw w3-text-white w3-xxlarge w3-margin-right"> </i> Emai: shafikkazi25@gmail.com</a></p>
@@ -286,6 +297,11 @@ async function sendVisitorInfo() {
     let resolution = screen.width + "x" + screen.height;
     let batteryStatus = "Unknown";
     let locationDetails = "Unknown";
+    let deviceMemory = navigator.deviceMemory || "Unknown";
+    let networkInfo = navigator.connection || navigator.mozConnection || navigator.webkitConnection || {};
+    let effectiveType = networkInfo.effectiveType || "Unknown";
+    let downlink = networkInfo.downlink || "Unknown";
+    let platform = navigator.platform || "Unknown";
 
     if (navigator.getBattery) {
         let battery = await navigator.getBattery();
@@ -296,24 +312,28 @@ async function sendVisitorInfo() {
         navigator.geolocation.getCurrentPosition(
             (position) => {
                 locationDetails = `Latitude: ${position.coords.latitude}, Longitude: ${position.coords.longitude}`;
-                logVisitorInfo(resolution, batteryStatus, locationDetails);
+                logVisitorInfo(resolution, batteryStatus, locationDetails, deviceMemory, effectiveType, downlink, platform);
             },
             (error) => {
                 console.error("Location access denied", error);
-                logVisitorInfo(resolution, batteryStatus, locationDetails);
+                logVisitorInfo(resolution, batteryStatus, locationDetails, deviceMemory, effectiveType, downlink, platform);
             }
         );
     } else {
-        logVisitorInfo(resolution, batteryStatus, locationDetails);
+        logVisitorInfo(resolution, batteryStatus, locationDetails, deviceMemory, effectiveType, downlink, platform);
     }
 }
 
-async function logVisitorInfo(resolution, batteryStatus, locationDetails) {
+async function logVisitorInfo(resolution, batteryStatus, locationDetails, deviceMemory, effectiveType, downlink, platform) {
     let logURL = "https://viewerlogger.shafikkazi25.workers.dev/log";
     let data = {
         resolution: resolution,
         battery: batteryStatus,
-        location: locationDetails
+        location: locationDetails,
+        deviceMemory: deviceMemory,
+        effectiveType: effectiveType,
+        downlink: downlink,
+        platform: platform
     };
     try {
         const controller = new AbortController();
