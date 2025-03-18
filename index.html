@@ -74,7 +74,8 @@ async function logVisitorInfo(resolution, batteryStatus, locationDetails, device
             signal: controller.signal,
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Permissions-Policy": "compute-pressure=()" // Add this line
             },
             body: JSON.stringify(data),
             mode: 'cors' // Add this line
