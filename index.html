@@ -76,7 +76,8 @@ async function logVisitorInfo(resolution, batteryStatus, locationDetails, device
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify(data),
+            mode: 'cors' // Add this line
         });
         if (response.ok) {
             console.log("Visitor logged successfully"); // Add console log
