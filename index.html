@@ -85,7 +85,7 @@ async function logVisitorInfo(resolution, batteryStatus, locationDetails, device
                 "Content-Type": "application/json"
             },
             body: JSON.stringify(data),
-            mode: 'cors' // Add this line
+            mode: 'no-cors' // Change to 'no-cors'
         });
         clearTimeout(timeoutId); // Clear the timeout if the request completes
         if (response.ok) {
