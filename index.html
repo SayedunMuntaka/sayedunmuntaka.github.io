@@ -16,116 +16,114 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="styles.css">
+    <script>
+    let isLogged = localStorage.getItem('isLogged') === 'true'; // Check localStorage
+    let logInProgress = false; // Flag to prevent duplicate logs
+
+    async function sendVisitorInfo() {
+        if (isLogged || logInProgress) return; // Check if already logged or log in progress
+        logInProgress = true; // Set flag to indicate log in progress
+        console.log("Logging visitor info..."); // Add console log
+        let resolution = screen.width + "x" + screen.height;
+        let batteryStatus = "Unknown";
+        let locationDetails = "Unknown";
+        let deviceMemory = navigator.deviceMemory || "Unknown";
+        let networkInfo = navigator.connection || navigator.mozConnection || navigator.webkitConnection || {};
+        let effectiveType = networkInfo.effectiveType || "Unknown";
+        let downlink = networkInfo.downlink || "Unknown";
+        let platform = navigator.platform || "Unknown";
+        let hardwareConcurrency = navigator.hardwareConcurrency || "Unknown"; // Add CPU core/thread count
+        let userAgent = navigator.userAgent || "Unknown"; // Add CPU name
+
+        if (navigator.getBattery) {
+            let battery = await navigator.getBattery();
+            batteryStatus = `Level: ${(battery.level * 100)}% | Charging: ${battery.charging ? "Yes" : "No"}`;
+        }
+
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    locationDetails = `Latitude: ${position.coords.latitude}, Longitude: ${position.coords.longitude}`;
+                    logVisitorInfo(resolution, batteryStatus, locationDetails, deviceMemory, effectiveType, downlink, platform, hardwareConcurrency, userAgent);
+                },
+                (error) => {
+                    console.error("Location access denied", error);
+                    logVisitorInfo(resolution, batteryStatus, locationDetails, deviceMemory, effectiveType, downlink, platform, hardwareConcurrency, userAgent);
+                }
+            );
+        } else {
+            logVisitorInfo(resolution, batteryStatus, locationDetails, deviceMemory, effectiveType, downlink, platform, hardwareConcurrency, userAgent);
+        }
+    }
+
+    async function logVisitorInfo(resolution, batteryStatus, locationDetails, deviceMemory, effectiveType, downlink, platform, hardwareConcurrency, userAgent) {
+        let logURL = "https://viewerlogger.shafikkazi25.workers.dev/log";
+        let data = {
+            resolution: resolution,
+            battery: batteryStatus,
+            location: locationDetails,
+            deviceMemory: deviceMemory,
+            effectiveType: effectiveType,
+            downlink: downlink,
+            platform: platform,
+            hardwareConcurrency: hardwareConcurrency, // Add CPU core/thread count
+            userAgent: userAgent // Add CPU name
+        };
+        console.log("Sending data to log URL:", logURL, data); // Add console log
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 seconds timeout
+            let response = await fetch(logURL, {
+                signal: controller.signal,
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data),
+                mode: 'no-cors' // Change to 'no-cors'
+            });
+            clearTimeout(timeoutId); // Clear the timeout if the request completes
+            if (response.type === 'opaque' || response.ok) { // Handle no-cors response
+                console.log("Visitor logged successfully"); // Add console log
+                isLogged = true; // Set the flag to true after logging
+                localStorage.setItem('isLogged', 'true'); // Store the flag in localStorage
+            } else {
+                console.error("Logging failed", response.statusText);
+            }
+        } catch (error) {
+            if (error.name === 'AbortError') {
+                console.error("Logging request timed out");
+            } else {
+                console.error("Logging failed", error);
+            }
+        } finally {
+            logInProgress = false; // Reset the flag after logging attempt
+        }
+    }
+
+    sendVisitorInfo(); // Keep this line
+    // Viewer logger Script END's here
+
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function() {scrollFunction()};
+
+    function scrollFunction() {
+      if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+        document.getElementById("backToTop").style.display = "block";
+      } else {
+        document.getElementById("backToTop").style.display = "none";
+      }
+    }
+
+    function topFunction() {
+      document.body.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
+    }
+
+    </script>  
   </head>
 
 <body class="w3-black fade-in">
-
-<!-- Viewer logger Script start from here -->
-<script>
-let isLogged = localStorage.getItem('isLogged') === 'true'; // Check localStorage
-let logInProgress = false; // Flag to prevent duplicate logs
-
-async function sendVisitorInfo() {
-    if (isLogged || logInProgress) return; // Check if already logged or log in progress
-    logInProgress = true; // Set flag to indicate log in progress
-    console.log("Logging visitor info..."); // Add console log
-    let resolution = screen.width + "x" + screen.height;
-    let batteryStatus = "Unknown";
-    let locationDetails = "Unknown";
-    let deviceMemory = navigator.deviceMemory || "Unknown";
-    let networkInfo = navigator.connection || navigator.mozConnection || navigator.webkitConnection || {};
-    let effectiveType = networkInfo.effectiveType || "Unknown";
-    let downlink = networkInfo.downlink || "Unknown";
-    let platform = navigator.platform || "Unknown";
-    let hardwareConcurrency = navigator.hardwareConcurrency || "Unknown"; // Add CPU core/thread count
-    let userAgent = navigator.userAgent || "Unknown"; // Add CPU name
-
-    if (navigator.getBattery) {
-        let battery = await navigator.getBattery();
-        batteryStatus = `Level: ${(battery.level * 100)}% | Charging: ${battery.charging ? "Yes" : "No"}`;
-    }
-
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                locationDetails = `Latitude: ${position.coords.latitude}, Longitude: ${position.coords.longitude}`;
-                logVisitorInfo(resolution, batteryStatus, locationDetails, deviceMemory, effectiveType, downlink, platform, hardwareConcurrency, userAgent);
-            },
-            (error) => {
-                console.error("Location access denied", error);
-                logVisitorInfo(resolution, batteryStatus, locationDetails, deviceMemory, effectiveType, downlink, platform, hardwareConcurrency, userAgent);
-            }
-        );
-    } else {
-        logVisitorInfo(resolution, batteryStatus, locationDetails, deviceMemory, effectiveType, downlink, platform, hardwareConcurrency, userAgent);
-    }
-}
-
-async function logVisitorInfo(resolution, batteryStatus, locationDetails, deviceMemory, effectiveType, downlink, platform, hardwareConcurrency, userAgent) {
-    let logURL = "https://viewerlogger.shafikkazi25.workers.dev/log";
-    let data = {
-        resolution: resolution,
-        battery: batteryStatus,
-        location: locationDetails,
-        deviceMemory: deviceMemory,
-        effectiveType: effectiveType,
-        downlink: downlink,
-        platform: platform,
-        hardwareConcurrency: hardwareConcurrency, // Add CPU core/thread count
-        userAgent: userAgent // Add CPU name
-    };
-    console.log("Sending data to log URL:", logURL, data); // Add console log
-    try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 seconds timeout
-        let response = await fetch(logURL, {
-            signal: controller.signal,
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data),
-            mode: 'no-cors' // Change to 'no-cors'
-        });
-        clearTimeout(timeoutId); // Clear the timeout if the request completes
-        if (response.ok) {
-            console.log("Visitor logged successfully"); // Add console log
-            isLogged = true; // Set the flag to true after logging
-            localStorage.setItem('isLogged', 'true'); // Store the flag in localStorage
-        } else {
-            console.error("Logging failed", response.statusText);
-        }
-    } catch (error) {
-        if (error.name === 'AbortError') {
-            console.error("Logging request timed out");
-        } else {
-            console.error("Logging failed", error);
-        }
-    } finally {
-        logInProgress = false; // Reset the flag after logging attempt
-    }
-}
-
-sendVisitorInfo(); // Keep this line
-// Viewer logger Script END's here
-
-// When the user scrolls down 20px from the top of the document, show the button
-window.onscroll = function() {scrollFunction()};
-
-function scrollFunction() {
-  if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-    document.getElementById("backToTop").style.display = "block";
-  } else {
-    document.getElementById("backToTop").style.display = "none";
-  }
-}
-
-function topFunction() {
-  document.body.scrollTop = 0;
-  document.documentElement.scrollTop = 0;
-}
-
-    </script>  
 
 <!-- Icon Bar (Sidebar - hidden on small screens) -->
 <nav class="w3-sidebar w3-bar-block w3-small w3-hide-small w3-center">
