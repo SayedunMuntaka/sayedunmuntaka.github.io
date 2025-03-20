@@ -121,32 +121,10 @@
       document.documentElement.scrollTop = 0;
     }
 
-    function toggleDarkMode() {
-      document.body.classList.toggle("dark-mode");
-      localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
-    }
-
-    function applyDarkMode() {
-      if (localStorage.getItem('darkMode') === 'true') {
-        document.body.classList.add('dark-mode');
-      }
-    }
-
-    function validateForm() {
-      const name = document.getElementById("name").value;
-      const email = document.getElementById("email").value;
-      const message = document.getElementById("message").value;
-      if (name === "" || email === "" || message === "") {
-        alert("All fields must be filled out");
-        return false;
-      }
-      return true;
-    }
-
     </script>  
   </head>
 
-<body class="w3-black fade-in" onload="applyDarkMode()">
+<body class="w3-black fade-in">
 
 <!-- Icon Bar (Sidebar - hidden on small screens) -->
 <nav class="w3-sidebar w3-bar-block w3-small w3-hide-small w3-center">
@@ -307,13 +285,8 @@
   <div class="w3-padding-64 w3-content w3-text-grey" id="contact">
     <h2 class="w3-text-light-grey">Contact Me</h2>
     <hr style="width:200px" class="w3-opacity">
-    <form onsubmit="return validateForm()" action="https://formspree.io/f/{your_form_id}" method="POST">
-      <p><input class="w3-input w3-padding-16" type="text" placeholder="Name" required name="name" id="name"></p>
-      <p><input class="w3-input w3-padding-16" type="email" placeholder="Email" required name="email" id="email"></p>
-      <p><textarea class="w3-input w3-padding-16" placeholder="Message" required name="message" id="message"></textarea></p>
-      <p><button class="w3-button w3-light-grey w3-padding-large" type="submit">SEND MESSAGE</button></p>
-    </form>
-    <div class="w3-section"></div>
+
+  <div class="w3-section"></div>
       <p><a href="https://goo.gl/maps/EtzCcCCjMZkQYnE4A" target="_blank"><i class="fa fa-map-marker fa-fw w3-text-white w3-xxlarge w3-margin-right"></i> Chandpur, Chittagong, Bangladesh</a></p>
       <p><a href="tel:+8801302048008" target="_blank"><i class="fa fa-phone fa-fw w3-text-white w3-xxlarge w3-margin-right"></i> Phone: +8801302048008</a></p>
       <p><a href="mailto:shafikkazi25@gmail.com" target="_blank"><i class="fa fa-envelope fa-fw w3-text-white w3-xxlarge w3-margin-right"> </i> Email: shafikkazi25@gmail.com</a></p>
@@ -322,11 +295,6 @@
 
   <!-- End Contact Section -->  
   </div>
-
-<!-- Dark Mode Toggle -->
-<div class="w3-padding-16 w3-center">
-  <button onclick="toggleDarkMode()" class="w3-button w3-dark-grey">Toggle Dark Mode</button>
-</div>
 
 <button onclick="topFunction()" id="backToTop" title="Go to top"></button>
 
