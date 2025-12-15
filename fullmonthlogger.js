@@ -9,6 +9,19 @@ function getMonthKey(date) {
 export default {
     async fetch(request, env) {
         const url = new URL(request.url);
+        const corsHeaders = {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type'
+        };
+        
+        // Handle OPTIONS for CORS preflight
+        if (request.method === 'OPTIONS') {
+            return new Response(null, {
+                status: 204,
+                headers: corsHeaders
+            });
+        }
         
         // Handle /count endpoint to fetch visitor count
         if (url.pathname === '/count') {
@@ -24,30 +37,19 @@ export default {
                     status: 200,
                     headers: {
                         'Content-Type': 'application/json',
-                        'Access-Control-Allow-Origin': '*',
-                        'Access-Control-Allow-Methods': 'GET, OPTIONS',
-                        'Access-Control-Allow-Headers': 'Content-Type'
+                        ...corsHeaders
                     }
                 });
             } catch (error) {
                 console.error("Error fetching visitor count:", error);
                 return new Response(JSON.stringify({ error: 'Failed to fetch count', count: 0 }), {
                     status: 500,
-                    headers: { 'Content-Type': 'application/json' }
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...corsHeaders
+                    }
                 });
             }
-        }
-
-        // Handle OPTIONS for CORS
-        if (request.method === 'OPTIONS') {
-            return new Response(null, {
-                status: 204,
-                headers: {
-                    'Access-Control-Allow-Origin': '*',
-                    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-                    'Access-Control-Allow-Headers': 'Content-Type'
-                }
-            });
         }
 
         // Original behavior for monthly report (POST request or cron trigger)

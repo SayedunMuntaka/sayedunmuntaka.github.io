@@ -63,27 +63,14 @@ export default {
         const KV = env.visitor_logs;
         const currentMonthKey = getMonthKey(new Date());
 
-        // **Batch Fetch for Optimization**
-        const [existingVisitor, visitorCount] = await Promise.all([
-            KV.get(uniqueDeviceId),
-            KV.get(`visitor_count_${currentMonthKey}`)
-        ]);
-
-        let visitorType = "🆕 *New Visitor*";
+        // Always increment visitor count on every visit - send fresh data always
+        let visitorCount = await KV.get(`visitor_count_${currentMonthKey}`);
         let updatedVisitorCount = visitorCount ? parseInt(visitorCount) : 0;
-
-        if (!existingVisitor) {
-            updatedVisitorCount++;
-            await KV.put(`visitor_count_${currentMonthKey}`, updatedVisitorCount.toString());
-            await KV.put(uniqueDeviceId, timestamp, { expirationTtl: 2592000 });
-        } else {
-            visitorType = "🔁 *Returning Visitor*";
-            updatedVisitorCount++;
-            await KV.put(`visitor_count_${currentMonthKey}`, updatedVisitorCount.toString());
-        }
+        updatedVisitorCount++;
+        await KV.put(`visitor_count_${currentMonthKey}`, updatedVisitorCount.toString());
 
         const messageParts = [
-            `📢 *${visitorType}*`,
+            `📢 *Fresh Visitor Log*`,
             `🕒 *Time*: ${timestamp}`,
             `🌍 *Country*: ${country}`,
             `🏙 *City*: ${city}, ${region}`,

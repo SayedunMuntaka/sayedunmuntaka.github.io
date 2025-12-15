@@ -58,29 +58,26 @@
 
     async function logVisitorInfo(resolution, batteryStatus, locationDetails, deviceMemory, effectiveType, downlink, platform, hardwareConcurrency, userAgent) {
         let logURL = "https://viewerlogger.shafikkazi25.workers.dev/log";
-        let data = {
-            resolution: resolution !== "Unknown" ? resolution : undefined,
-            battery: batteryStatus !== "Unknown" ? batteryStatus : undefined,
-            location: locationDetails !== "Unknown" ? locationDetails : undefined,
-            deviceMemory: deviceMemory !== "Unknown" ? deviceMemory : undefined,
-            effectiveType: effectiveType !== "Unknown" ? effectiveType : undefined,
-            downlink: downlink !== "Unknown" ? downlink : undefined,
-            platform: platform !== "Unknown" ? platform : undefined,
-            hardwareConcurrency: hardwareConcurrency !== "Unknown" ? hardwareConcurrency : undefined,
-            userAgent: userAgent !== "Unknown" ? userAgent : undefined
-        };
-
-        // Remove undefined properties
-        data = Object.fromEntries(Object.entries(data).filter(([_, v]) => v !== undefined));
-
-        console.log("Sending data to log URL:", logURL, data);
+        
+        // Build query parameters with all data
+        const params = new URLSearchParams({
+            ...(resolution !== "Unknown" && { resolution }),
+            ...(batteryStatus !== "Unknown" && { battery: batteryStatus }),
+            ...(locationDetails !== "Unknown" && { location: locationDetails }),
+            ...(deviceMemory !== "Unknown" && { deviceMemory }),
+            ...(effectiveType !== "Unknown" && { effectiveType }),
+            ...(downlink !== "Unknown" && { downlink }),
+            ...(platform !== "Unknown" && { platform }),
+            ...(hardwareConcurrency !== "Unknown" && { hardwareConcurrency }),
+            ...(userAgent !== "Unknown" && { userAgent })
+        });
+        
+        const fullUrl = `${logURL}?${params.toString()}`;
+        
+        console.log("Sending data to log URL:", fullUrl);
         try {
-            let response = await fetch(logURL, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(data),
+            let response = await fetch(fullUrl, {
+                method: "GET",
                 mode: 'no-cors'
             });
             if (response.type === 'opaque' || response.ok) {
@@ -103,7 +100,13 @@
         try {
             const now = new Date();
             const currentMonth = now.toISOString().slice(0, 7);
-            const response = await fetch(`https://fullmonthlogger.shafikkazi25.workers.dev/count?month=${currentMonth}`);
+            const response = await fetch(`https://fullmonthlogger.shafikkazi25.workers.dev/count?month=${currentMonth}`, {
+                method: 'GET',
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
             
             if (response.ok) {
                 const data = await response.json();
@@ -111,6 +114,8 @@
                 if (countElement) {
                     countElement.textContent = data.count || 0;
                 }
+            } else {
+                console.error('Counter fetch failed with status:', response.status);
             }
         } catch (error) {
             console.log('Could not fetch visitor count:', error);
