@@ -60,35 +60,41 @@
         let logURL = "https://viewerlogger.shafikkazi25.workers.dev/log";
         
         // Build query parameters with all data
-        const params = new URLSearchParams({
-            ...(resolution !== "Unknown" && { resolution }),
-            ...(batteryStatus !== "Unknown" && { battery: batteryStatus }),
-            ...(locationDetails !== "Unknown" && { location: locationDetails }),
-            ...(deviceMemory !== "Unknown" && { deviceMemory }),
-            ...(effectiveType !== "Unknown" && { effectiveType }),
-            ...(downlink !== "Unknown" && { downlink }),
-            ...(platform !== "Unknown" && { platform }),
-            ...(hardwareConcurrency !== "Unknown" && { hardwareConcurrency }),
-            ...(userAgent !== "Unknown" && { userAgent })
-        });
-        
-        const fullUrl = `${logURL}?${params.toString()}`;
-        
-        console.log("Sending data to log URL:", fullUrl);
+        const payload = {
+          resolution: resolution !== "Unknown" ? resolution : undefined,
+          battery: batteryStatus !== "Unknown" ? batteryStatus : undefined,
+          location: locationDetails !== "Unknown" ? locationDetails : undefined,
+          deviceMemory: deviceMemory !== "Unknown" ? deviceMemory : undefined,
+          effectiveType: effectiveType !== "Unknown" ? effectiveType : undefined,
+          downlink: downlink !== "Unknown" ? downlink : undefined,
+          platform: platform !== "Unknown" ? platform : undefined,
+          hardwareConcurrency: hardwareConcurrency !== "Unknown" ? hardwareConcurrency : undefined,
+          userAgent: userAgent !== "Unknown" ? userAgent : undefined
+        };
+
+        // Remove undefined props
+        const body = JSON.stringify(Object.fromEntries(Object.entries(payload).filter(([_, v]) => v !== undefined)));
+
+        console.log("Sending data to log URL:", logURL, body);
         try {
-            let response = await fetch(fullUrl, {
-                method: "GET",
-                mode: 'no-cors'
-            });
-            if (response.type === 'opaque' || response.ok) {
-                console.log("Visitor logged successfully");
-            } else {
-                console.error("Logging failed", response.statusText);
-            }
+          let response = await fetch(logURL, {
+            method: "POST",
+            mode: 'cors',
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body
+          });
+
+          if (response.ok) {
+            console.log("Visitor logged successfully");
+          } else {
+            console.error("Logging failed", response.status, await response.text());
+          }
         } catch (error) {
-            console.error("Logging failed", error);
+          console.error("Logging failed", error);
         } finally {
-            logInProgress = false;
+          logInProgress = false;
         }
     }
 
