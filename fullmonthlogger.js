@@ -8,51 +8,6 @@ function getMonthKey(date) {
 
 export default {
     async fetch(request, env) {
-        const url = new URL(request.url);
-        const corsHeaders = {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type'
-        };
-        
-        // Handle OPTIONS for CORS preflight
-        if (request.method === 'OPTIONS') {
-            return new Response(null, {
-                status: 204,
-                headers: corsHeaders
-            });
-        }
-        
-        // Handle /count endpoint to fetch visitor count
-        if (url.pathname === '/count') {
-            const KV = env.visitor_logs;
-            const monthParam = url.searchParams.get('month');
-            const currentMonthKey = monthParam || getMonthKey(new Date());
-
-            try {
-                let totalVisitors = await KV.get(`visitor_count_${currentMonthKey}`);
-                totalVisitors = totalVisitors ? parseInt(totalVisitors) : 0;
-
-                return new Response(JSON.stringify({ count: totalVisitors }), {
-                    status: 200,
-                    headers: {
-                        'Content-Type': 'application/json',
-                        ...corsHeaders
-                    }
-                });
-            } catch (error) {
-                console.error("Error fetching visitor count:", error);
-                return new Response(JSON.stringify({ error: 'Failed to fetch count', count: 0 }), {
-                    status: 500,
-                    headers: {
-                        'Content-Type': 'application/json',
-                        ...corsHeaders
-                    }
-                });
-            }
-        }
-
-        // Original behavior for monthly report (POST request or cron trigger)
         const KV = env.visitor_logs;
         const currentMonthKey = getMonthKey(new Date());
 

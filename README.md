@@ -2,10 +2,10 @@
 Welcome to the repository for the portfolio website. This README has been upgraded to highlight the repository contents, explain the visitor-logging setup, and provide quick local testing and deployment instructions.
 
 **Repository Files**
-- `index.html`: Main static site markup. Includes a visitor-logging client script, monthly visitor counter, and Content Security Policy meta header.
-- `styles.css`: Styling for the site (sidebar, back-to-top button, animations, and monthly visitor counter).
+- `index.html`: Main static site markup. Includes a visitor-logging client script and Content Security Policy meta header.
+- `styles.css`: Styling for the site (sidebar, back-to-top button, animations).
 - `viewerlogger.js`: Cloudflare Worker script that receives visitor logs (from the front-end), stores data in a KV namespace (`visitor_logs`), and sends formatted messages to a Telegram chat.
-- `fullmonthlogger.js`: Cloudflare Worker script that reads monthly counts from KV, exposes a `/count` endpoint for the frontend counter, and sends a monthly summary to Telegram.
+- `fullmonthlogger.js`: Cloudflare Worker script that reads monthly counts from KV and sends a monthly summary to Telegram.
 
 ## 🌐 Website Overview
 
@@ -21,17 +21,15 @@ This portfolio website includes these sections:
 
 - Smooth scrolling and responsive layout using W3.CSS.
 - Simple back-to-top functionality.
-- **Monthly Visitor Counter**: Displays the current month's visitor count at the bottom of the page with a stylish black & white design.
 - Visitor logging pipeline: front-end collects device/network info and calls a Cloudflare Worker to store/log visitors and forward details to Telegram.
-## 📊 Visitor Logging & Counter (Details)
+
+## 📊 Visitor Logging (Details)
 
 - `index.html` contains a client script that collects: screen resolution, battery status (if available), geolocation (with permission), device memory, network information, platform, hardwareConcurrency, and user agent.
 - The front-end currently calls a logging endpoint like `https://viewerlogger.shafikkazi25.workers.dev/log`. Replace that URL with your Worker route when deploying your own Worker.
-- **Monthly Counter**: A dedicated script fetches the current month's visitor count from the `fullmonthlogger.js` worker and displays it in an elegant counter box at the bottom of the page.
 - `viewerlogger.js` expects the following Cloudflare environment bindings:
   - KV namespace binding named `visitor_logs`.
   - `BOT_TOKEN` (Telegram bot token) and `CHAT_ID` (chat or channel ID) set in Worker environment variables.
-- `fullmonthlogger.js` exposes a `/count` endpoint that returns the monthly visitor count as JSON: `{ count: number }`. It also reads `visitor_count_<YYYY-MM>` keys from the `visitor_logs` KV and sends a monthly summary to Telegram. Requires the same `BOT_TOKEN` and `CHAT_ID` env vars.
 - `fullmonthlogger.js` reads `visitor_count_<YYYY-MM>` keys from the same `visitor_logs` KV and sends a monthly summary to Telegram. It also requires the same `BOT_TOKEN` and `CHAT_ID` env vars.
 
 Security notes:
