@@ -97,6 +97,37 @@
     sendVisitorInfo(); // Keep this line
     // Viewer logger Script END's here
 
+    // Fetch monthly visitor count
+    async function fetchMonthlyVisitorCount() {
+        try {
+            // Get current month in YYYY-MM format
+            const now = new Date();
+            const currentMonth = now.toISOString().slice(0, 7);
+            
+            // Create a fetch to your fullmonthlogger worker or KV API
+            // Since KV doesn't have a direct public API, we'll try to fetch the count
+            const response = await fetch(`https://fullmonthlogger.shafikkazi25.workers.dev/count?month=${currentMonth}`);
+            
+            if (response.ok) {
+                const data = await response.json();
+                const countElement = document.getElementById('monthlyVisitorCount');
+                if (countElement) {
+                    countElement.textContent = data.count || 0;
+                }
+            }
+        } catch (error) {
+            console.log('Could not fetch visitor count:', error);
+            // Fallback: Show message that count is unavailable
+            const countElement = document.getElementById('monthlyVisitorCount');
+            if (countElement) {
+                countElement.textContent = '—';
+            }
+        }
+    }
+    
+    // Fetch count when page loads
+    window.addEventListener('load', fetchMonthlyVisitorCount);
+
     // When the user scrolls down 20px from the top of the document, show the button
     window.onscroll = function() {scrollFunction()};
 
@@ -345,6 +376,18 @@
   <a href="https://www.vk.com/sayedunmuntaka" target="_blank"><i class="fa fa-vk w3-hover-opacity"></i></a>
   <a href="https://www.youtube.com/SAYEDBHAI" target="_blank"><i class="fa fa-youtube w3-hover-opacity"></i></a>
 </footer>
+
+<!-- Monthly Visitor Counter Section -->
+<div class="w3-padding-64 w3-content w3-text-grey" id="visitor-counter">
+  <div class="w3-container w3-center w3-padding-32">
+    <div class="visitor-counter-box">
+      <div class="visitor-count-number" id="monthlyVisitorCount">—</div>
+      <div class="visitor-count-label">This Month Website view</div>
+    </div>
+  </div>
+  <p class="w3-center w3-small">Thank you for visiting!</p>
+</div>
+<!-- End Monthly Visitor Counter Section -->
 
 <script>
 // When the user scrolls down 20px from the top of the document, show the button

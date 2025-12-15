@@ -47,3 +47,76 @@ html {
   content: "↑";
   font-size: 24px;
 }
+
+/* Monthly Visitor Counter Styling */
+.visitor-counter-box {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  border: 2px solid #404040;
+  border-radius: 15px;
+  padding: 50px 40px;
+  display: inline-block;
+  min-width: 300px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: relative;
+  overflow: hidden;
+}
+
+.visitor-counter-box::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+  transition: left 0.5s;
+}
+
+.visitor-counter-box:hover::before {
+  left: 100%;
+}
+
+.visitor-counter-box:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  border-color: #606060;
+}
+
+.visitor-count-number {
+  font-size: 64px;
+  font-weight: 900;
+  color: #ffffff;
+  margin-bottom: 15px;
+  letter-spacing: 2px;
+  font-family: 'Arial', sans-serif;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.visitor-count-label {
+  font-size: 14px;
+  color: #b0b0b0;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-weight: 600;
+  word-spacing: 2px;
+}
+
+#visitor-counter {
+  background: #000000;
+  border-top: 1px solid #2d2d2d;
+  margin-top: 0;
+  padding-top: 80px !important;
+}
+
+#visitor-counter h2 {
+  font-size: 2.5em;
+  margin-bottom: 20px;
+  text-shadow: 0 2px 10px rgba(255, 0, 0, 0.1);
+}
+
+#visitor-counter hr {
+  background: linear-gradient(90deg, transparent, #404040, transparent);
+  border: none;
+  height: 2px;
+}
