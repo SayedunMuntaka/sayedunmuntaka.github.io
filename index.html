@@ -382,28 +382,29 @@ function formatMonthYear(date) {
 
 async function loadMonthlyVisitorCount() {
   try {
-    const currentDate = new Date();
-    const monthKey = getMonthKey(currentDate);
-    const monthYear = formatMonthYear(currentDate);
+    const countUrl = "https://viewerlogger.shafikkazi25.workers.dev/get-count";
     
-    // Fetch from your KV storage endpoint (fullmonthlogger)
-    // This assumes your Cloudflare Worker exposes the count via an API
-    // For now, we'll fetch from localStorage as fallback
-    let visitorCount = 0;
+    const response = await fetch(countUrl, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+
+    const data = await response.json();
     
-    // Try to get from localStorage (synced with viewerlogger.js)
-    const storedCount = localStorage.getItem(`visitor_count_${monthKey}`);
-    if (storedCount) {
-      visitorCount = parseInt(storedCount);
+    if (data.count !== undefined) {
+      animateNumber(0, data.count, 1500);
+      document.getElementById('countMonth').textContent = data.month || formatMonthYear(new Date());
+    } else {
+      document.getElementById('countMonth').textContent = formatMonthYear(new Date());
+      document.getElementById('monthlyCount').textContent = '0';
     }
-    
-    // Update the display with animation
-    animateNumber(0, visitorCount, 1500);
-    document.getElementById('countMonth').textContent = monthYear;
     
   } catch (error) {
     console.error('Error loading monthly visitor count:', error);
     document.getElementById('countMonth').textContent = formatMonthYear(new Date());
+    document.getElementById('monthlyCount').textContent = '0';
   }
 }
 
