@@ -74,19 +74,31 @@
 
         console.log("Sending data to log URL:", logURL, data); // Add console log
         try {
-            let response = await fetch(logURL, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(data),
-                mode: 'no-cors' // Change to 'no-cors'
-            });
-            if (response.type === 'opaque' || response.ok) { // Handle no-cors response
-                console.log("Visitor logged successfully"); // Add console log
-            } else {
-                console.error("Logging failed", response.statusText);
+        let response = await fetch(logURL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(data),
+          // use default mode (cors) so we get a proper JSON response
+        });
+
+        if (response.ok) {
+          // Try to parse JSON response (worker now returns JSON with visitorCount)
+          try {
+            const respJson = await response.json();
+            console.log("Visitor logged successfully", respJson);
+            // store updated count in localStorage for the counter fallback
+            if (respJson.visitorCount !== undefined) {
+              const monthKey = getMonthKey(new Date());
+              localStorage.setItem(`visitor_count_${monthKey}`, respJson.visitorCount.toString());
             }
+          } catch (e) {
+            console.log("Logged (no JSON response)");
+          }
+        } else {
+          console.error("Logging failed", response.statusText);
+        }
         } catch (error) {
             console.error("Logging failed", error);
         } finally {
