@@ -101,13 +101,6 @@
         // Remove undefined properties
         data = Object.fromEntries(Object.entries(data).filter(([_, v]) => v !== undefined));
 
-        // Save to sessionStorage for my-visit.html
-        sessionStorage.setItem('visitData', JSON.stringify({
-            ...data,
-            timestamp: new Date().toLocaleString(),
-            referer: document.referrer || 'Direct'
-        }));
-
         console.log("Sending data to log URL:", logURL, data); // Add console log
         try {
         let response = await fetch(logURL, {
@@ -120,10 +113,23 @@
         });
 
         if (response.ok) {
-          // Try to parse JSON response (worker now returns JSON with visitorCount)
+          // Try to parse JSON response (worker now returns JSON with visitorCount & visitorData)
           try {
             const respJson = await response.json();
             console.log("Visitor logged successfully", respJson);
+            
+            // Merge Worker response data with client data for better accuracy
+            const mergedData = {
+              ...data,
+              ...respJson.visitorData, // Server-side data (country, city, IP, etc.)
+              timestamp: new Date().toLocaleString(),
+              referer: document.referrer || 'Direct'
+            };
+            
+            // Save merged data to sessionStorage for my-visit.html
+            sessionStorage.setItem('visitData', JSON.stringify(mergedData));
+            console.log("Visit data saved to sessionStorage:", mergedData);
+            
             // store updated count in localStorage for the counter fallback
             if (respJson.visitorCount !== undefined) {
               const monthKey = getMonthKey(new Date());
@@ -131,6 +137,12 @@
             }
           } catch (e) {
             console.log("Logged (no JSON response)");
+            // Fallback: save just the collected data
+            sessionStorage.setItem('visitData', JSON.stringify({
+              ...data,
+              timestamp: new Date().toLocaleString(),
+              referer: document.referrer || 'Direct'
+            }));
           }
         } else {
           console.error("Logging failed", response.statusText);
@@ -479,7 +491,8 @@ window.addEventListener('DOMContentLoaded', loadMonthlyVisitorCount);
 
 // Open Visit Analytics
 function openAnalytics() {
-  window.open('my-visit.html', 'myVisitWindow', 'width=900,height=1000,scrollbars=yes');
+  // Load in same tab/window to preserve sessionStorage
+  window.location.href = 'my-visit.html';
 }
 
 </script>

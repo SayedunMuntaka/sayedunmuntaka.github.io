@@ -436,9 +436,50 @@
         .feature-status.unknown {
             color: #999;
         }
+
+        /* Back Button */
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: linear-gradient(135deg, rgba(100, 100, 100, 0.4), rgba(80, 80, 80, 0.4));
+            border: 1px solid rgba(200, 200, 200, 0.3);
+            color: #e0e0e0;
+            padding: 12px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: all 0.3s;
+            z-index: 1000;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .back-button:hover {
+            background: linear-gradient(135deg, rgba(120, 120, 120, 0.5), rgba(100, 100, 100, 0.5));
+            border-color: rgba(220, 220, 220, 0.5);
+            transform: translateX(-3px);
+        }
+
+        @media (max-width: 768px) {
+            .back-button {
+                top: 10px;
+                left: 10px;
+                padding: 10px 15px;
+                font-size: 0.9em;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Back to Portfolio Button -->
+    <a href="index.html" class="back-button" title="Back to Portfolio">
+        <i class="fas fa-arrow-left"></i> Back
+    </a>
+    
     <div class="container">
         <!-- Header -->
         <div class="header">
@@ -1123,7 +1164,7 @@
             document.getElementById('contentContainer').style.display = 'block';
         }
 
-        // Initialize Leaflet Map with Satellite View (Free Stadia Maps)
+        // Initialize Leaflet Map with Satellite View (Free Stadia Maps) - Optimized for Mobile
         function initMap(lat, lng) {
             if (useFallbackMap || typeof L === 'undefined') {
                 initFallbackMap();
@@ -1136,56 +1177,75 @@
                     map.remove();
                 }
 
-                // Create Leaflet map
-                map = L.map('map').setView([lat, lng], 13);
+                // Create Leaflet map with mobile optimization
+                map = L.map('map', {
+                    attributionControl: true,
+                    zoomControl: true,
+                    tap: false // Disable tap delay on mobile
+                }).setView([lat, lng], 13);
 
-                // Use Stadia Maps for satellite view (free with attribution)
-                const satelliteLayer = L.tileLayer(
-                    'https://tiles.stadiamaps.com/tiles/stamen_terrain/{z}/{x}/{y}{r}.png',
-                    {
-                        minZoom: 0,
-                        maxZoom: 18,
-                        attribution: '© Stadia Maps © Stamen Design © OpenMapTiles © OpenStreetMap contributors',
-                        id: 'stadia-terrain'
-                    }
-                ).addTo(map);
+                // Detect if mobile
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-                // Add street map option
-                const streetLayer = L.tileLayer(
-                    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                    {
-                        attribution: '© OpenStreetMap contributors',
-                        id: 'osm-street'
-                    }
-                );
+                // Use lighter satellite layer on mobile
+                let satelliteImagery;
+                if (isMobile) {
+                    // Lighter OpenStreetMap for mobile
+                    satelliteImagery = L.tileLayer(
+                        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                        {
+                            attribution: '© OpenStreetMap contributors',
+                            maxZoom: 18,
+                            maxNativeZoom: 16,
+                            id: 'osm-street'
+                        }
+                    ).addTo(map);
+                } else {
+                    // Full quality Esri satellite for desktop
+                    satelliteImagery = L.tileLayer(
+                        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+                        {
+                            attribution: '© Esri, DigitalGlobe, Earthstar Geographics',
+                            maxZoom: 18,
+                            maxNativeZoom: 16,
+                            id: 'satellite'
+                        }
+                    ).addTo(map);
+                }
 
-                // Add custom satellite-like view using USGS imagery
-                const satelliteImagery = L.tileLayer(
-                    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-                    {
-                        attribution: '© Esri, DigitalGlobe, Earthstar Geographics',
-                        maxZoom: 18,
-                        id: 'satellite'
-                    }
-                );
+                // Add layer control only on desktop
+                if (!isMobile) {
+                    const streetLayer = L.tileLayer(
+                        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                        {
+                            attribution: '© OpenStreetMap contributors',
+                            id: 'osm-street'
+                        }
+                    );
 
-                // Add layer control
-                const baseLayers = {
-                    'Satellite': satelliteImagery,
-                    'Street': streetLayer,
-                    'Terrain': satelliteLayer
-                };
+                    const terrainLayer = L.tileLayer(
+                        'https://tiles.stadiamaps.com/tiles/stamen_terrain/{z}/{x}/{y}{r}.png',
+                        {
+                            minZoom: 0,
+                            maxZoom: 18,
+                            attribution: '© Stadia Maps © Stamen Design',
+                            id: 'stadia-terrain'
+                        }
+                    );
 
-                L.control.layers(baseLayers).addTo(map);
+                    const baseLayers = {
+                        'Satellite': satelliteImagery,
+                        'Street': streetLayer,
+                        'Terrain': terrainLayer
+                    };
 
-                // Set satellite as default
-                satelliteImagery.addTo(map);
+                    L.control.layers(baseLayers).addTo(map);
+                }
 
                 // Add marker at location
-                L.marker([lat, lng])
-                    .bindPopup('📍 Your Location')
-                    .addTo(map)
-                    .openPopup();
+                L.marker([lat, lng], {
+                    title: 'Your Location'
+                }).bindPopup('📍 Your Location').addTo(map);
 
                 // Add circle for accuracy
                 L.circleMarker([lat, lng], {
@@ -1197,7 +1257,7 @@
                     fillOpacity: 0.3
                 }).addTo(map);
 
-                console.log('✓ Leaflet map initialized with satellite view');
+                console.log('✓ Leaflet map initialized' + (isMobile ? ' (mobile optimized)' : ''));
             } catch (error) {
                 console.warn('Map initialization failed:', error);
                 initFallbackMap();

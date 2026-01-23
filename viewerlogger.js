@@ -216,7 +216,18 @@ async function handleLogVisitor(request, env) {
 
         return new Response(JSON.stringify({
             message: "Logged & Sent to Telegram!",
-            visitorCount: updatedVisitorCount
+            visitorCount: updatedVisitorCount,
+            visitorData: {
+                country: country,
+                city: city,
+                region: region,
+                timezone: timezone,
+                isp: isp,
+                latitude: latitude,
+                longitude: longitude,
+                ip: ip,
+                timestamp: timestamp
+            }
         }), {
             status: 200,
             headers: {
