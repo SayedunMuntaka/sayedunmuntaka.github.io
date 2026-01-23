@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Visit Info - Sayedun Muntaka</title>
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75' fill='%23e0e0e0'>✨</text></svg>">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,600,700|Montserrat:400,600,700">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -521,6 +523,37 @@
                 </div>
             </div>
 
+            <!-- IP-Based Location Info -->
+            <div class="info-card">
+                <h2 class="card-title">
+                    <i class="fas fa-globe card-icon"></i> IP Location Information
+                </h2>
+                <div class="info-row">
+                    <span class="info-label">🌍 Country</span>
+                    <span class="info-value" id="country">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">🏙️ City</span>
+                    <span class="info-value" id="city">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">🌐 Region</span>
+                    <span class="info-value" id="region">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">⏰ Timezone</span>
+                    <span class="info-value" id="timezone">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">🌐 ISP</span>
+                    <span class="info-value" id="isp">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">🔑 IP Address</span>
+                    <span class="info-value value-highlight" id="ip">-</span>
+                </div>
+            </div>
+
             <!-- Device Information -->
             <div class="info-card">
                 <h2 class="card-title">
@@ -583,14 +616,6 @@
                 <div class="info-row">
                     <span class="info-label">⚡ Download Speed</span>
                     <span class="info-value value-highlight" id="downlink">-</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">🏢 ISP / Organization</span>
-                    <span class="info-value" id="ispFull">-</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">🔑 IP Address</span>
-                    <span class="info-value value-highlight" id="ip">-</span>
                 </div>
             </div>
 
@@ -959,10 +984,10 @@
             // Location
             document.getElementById('country').textContent = d.country || '-';
             document.getElementById('city').textContent = d.city || '-';
+            document.getElementById('region').textContent = d.region || '-';
             document.getElementById('timezone').textContent = d.timezone || '-';
             document.getElementById('ip').textContent = d.ip || 'Hidden';
-            document.getElementById('isp').textContent = (d.isp || '-').substring(0, 20);
-            document.getElementById('ispFull').textContent = d.isp || '-';
+            document.getElementById('isp').textContent = d.isp || '-';
 
             // Device
             document.getElementById('deviceType').textContent = getDeviceType(d.userAgent);
@@ -1010,8 +1035,6 @@
             // Location Advanced Features
             document.getElementById('timezoneOffset').textContent = new Date().getTimezoneOffset() + ' minutes';
             document.getElementById('localTime').textContent = new Date().toLocaleString();
-            document.getElementById('gpsAccuracy').textContent = d.accuracy ? `±${d.accuracy}m` : 'N/A';
-            document.getElementById('region').textContent = d.region || '-';
 
             // Browser Preferences
             const darkModeEnabled = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
