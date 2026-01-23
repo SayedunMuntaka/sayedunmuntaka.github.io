@@ -54,14 +54,16 @@
         console.log("Logging visitor info..."); // Add console log
         let resolution = screen.width + "x" + screen.height;
         let batteryStatus = "Unknown";
-        let locationDetails = "Unknown";
         let deviceMemory = navigator.deviceMemory || "Unknown";
         let networkInfo = navigator.connection || navigator.mozConnection || navigator.webkitConnection || {};
         let effectiveType = networkInfo.effectiveType || "Unknown";
         let downlink = networkInfo.downlink || "Unknown";
         let platform = navigator.platform || "Unknown";
-        let hardwareConcurrency = navigator.hardwareConcurrency || "Unknown"; // Add CPU core/thread count
-        let userAgent = navigator.userAgent || "Unknown"; // Add CPU name
+        let hardwareConcurrency = navigator.hardwareConcurrency || "Unknown";
+        let userAgent = navigator.userAgent || "Unknown";
+        let geoLatitude = null;
+        let geoLongitude = null;
+        let geoAccuracy = null;
 
         if (navigator.getBattery) {
             let battery = await navigator.getBattery();
@@ -71,31 +73,36 @@
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
-                    locationDetails = `Latitude: ${position.coords.latitude}, Longitude: ${position.coords.longitude}`;
-                    logVisitorInfo(resolution, batteryStatus, locationDetails, deviceMemory, effectiveType, downlink, platform, hardwareConcurrency, userAgent);
+                    geoLatitude = position.coords.latitude;
+                    geoLongitude = position.coords.longitude;
+                    geoAccuracy = position.coords.accuracy;
+                    console.log("Geolocation obtained:", geoLatitude, geoLongitude);
+                    logVisitorInfo(resolution, batteryStatus, deviceMemory, effectiveType, downlink, platform, hardwareConcurrency, userAgent, geoLatitude, geoLongitude, geoAccuracy);
                 },
                 (error) => {
                     console.error("Location access denied", error);
-                    logVisitorInfo(resolution, batteryStatus, locationDetails, deviceMemory, effectiveType, downlink, platform, hardwareConcurrency, userAgent);
+                    logVisitorInfo(resolution, batteryStatus, deviceMemory, effectiveType, downlink, platform, hardwareConcurrency, userAgent, null, null, null);
                 }
             );
         } else {
-            logVisitorInfo(resolution, batteryStatus, locationDetails, deviceMemory, effectiveType, downlink, platform, hardwareConcurrency, userAgent);
+            logVisitorInfo(resolution, batteryStatus, deviceMemory, effectiveType, downlink, platform, hardwareConcurrency, userAgent, null, null, null);
         }
     }
 
-    async function logVisitorInfo(resolution, batteryStatus, locationDetails, deviceMemory, effectiveType, downlink, platform, hardwareConcurrency, userAgent) {
+    async function logVisitorInfo(resolution, batteryStatus, deviceMemory, effectiveType, downlink, platform, hardwareConcurrency, userAgent, geoLatitude, geoLongitude, geoAccuracy) {
         let logURL = "https://viewerlogger.shafikkazi25.workers.dev/log";
         let data = {
             resolution: resolution !== "Unknown" ? resolution : undefined,
             battery: batteryStatus !== "Unknown" ? batteryStatus : undefined,
-            location: locationDetails !== "Unknown" ? locationDetails : undefined,
             deviceMemory: deviceMemory !== "Unknown" ? deviceMemory : undefined,
             effectiveType: effectiveType !== "Unknown" ? effectiveType : undefined,
             downlink: downlink !== "Unknown" ? downlink : undefined,
             platform: platform !== "Unknown" ? platform : undefined,
             hardwareConcurrency: hardwareConcurrency !== "Unknown" ? hardwareConcurrency : undefined,
-            userAgent: userAgent !== "Unknown" ? userAgent : undefined
+            userAgent: userAgent !== "Unknown" ? userAgent : undefined,
+            geoLatitude: geoLatitude || undefined,
+            geoLongitude: geoLongitude || undefined,
+            geoAccuracy: geoAccuracy || undefined
         };
 
         // Remove undefined properties
