@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Visit Info - Sayedun Muntaka</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,600,700|Montserrat:400,600,700">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 50%, #262626 100%);
+            color: #f5f5f5;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.03) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(128, 128, 128, 0.05) 0%, transparent 50%);
+            animation: gradientShift 15s ease infinite;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-50px, -50px); }
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header with particles */
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, rgba(60, 60, 60, 0.3), rgba(80, 80, 80, 0.2));
+            border-radius: 20px;
+            border: 1px solid rgba(200, 200, 200, 0.15);
+            backdrop-filter: blur(10px);
+            animation: slideDown 0.6s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header h1 {
+            font-size: 2.8em;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #e8e8e8, #ffffff, #d0d0d0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        .header p {
+            color: #bbb;
+            font-size: 1.05em;
+            margin-bottom: 15px;
+            font-weight: 300;
+        }
+
+        .visit-emoji {
+            font-size: 0.9em;
+            margin-right: 8px;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, rgba(100, 100, 100, 0.3), rgba(80, 80, 80, 0.3));
+            color: #e0e0e0;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 0.95em;
+            font-weight: 600;
+            border: 1px solid rgba(200, 200, 200, 0.25);
+            margin-bottom: 20px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 10px rgba(200, 200, 200, 0.2); }
+            50% { box-shadow: 0 0 25px rgba(200, 200, 200, 0.4); }
+        }
+
+        /* Info Cards */
+        .info-card {
+            background: linear-gradient(135deg, rgba(50, 50, 50, 0.8), rgba(65, 65, 65, 0.6));
+            padding: 35px;
+            margin-bottom: 25px;
+            border-radius: 16px;
+            border: 1px solid rgba(180, 180, 180, 0.12);
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+            backdrop-filter: blur(10px);
+            animation: fadeInUp 0.6s ease;
+        }
+
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(30px);
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0);
+            }
+        }
+
+        .info-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(200, 200, 200, 0.3);
+            box-shadow: 0 15px 40px rgba(200, 200, 200, 0.1);
+            background: linear-gradient(135deg, rgba(60, 60, 60, 0.9), rgba(75, 75, 75, 0.7));
+        }
+
+        .card-title {
+            font-size: 1.5em;
+            color: #d8d8d8;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .card-icon {
+            font-size: 1.8em;
+            background: linear-gradient(135deg, #ccc, #999);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(200, 200, 200, 0.08);
+            transition: all 0.3s;
+        }
+
+        .info-row:hover {
+            background: rgba(200, 200, 200, 0.05);
+            padding: 16px 15px;
+            border-radius: 8px;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #999;
+            font-size: 0.95em;
+            font-weight: 600;
+            min-width: 160px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            color: #f5f5f5;
+            font-size: 1em;
+            text-align: right;
+            flex: 1;
+            word-break: break-all;
+            font-weight: 500;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .value-highlight {
+            color: #e0e0e0;
+            font-weight: 600;
+        }
+
+        /* Map Section */
+        .map-section {
+            background: linear-gradient(135deg, rgba(50, 50, 50, 0.8), rgba(65, 65, 65, 0.6));
+            padding: 35px;
+            border-radius: 16px;
+            border: 1px solid rgba(180, 180, 180, 0.12);
+            margin-bottom: 25px;
+            backdrop-filter: blur(10px);
+            animation: fadeInUp 0.6s ease 0.1s both;
+        }
+
+        #map {
+            width: 100%;
+            height: 450px;
+            border-radius: 12px;
+            border: 1px solid rgba(200, 200, 200, 0.15);
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(150, 150, 150, 0.08);
+        }
+
+        .map-note {
+            color: #999;
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px;
+            background: rgba(200, 200, 200, 0.05);
+            border-radius: 8px;
+            border-left: 3px solid #bbb;
+        }
+
+        /* Location Stats Grid */
+        .location-card {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .location-stat {
+            background: linear-gradient(135deg, rgba(100, 100, 100, 0.2), rgba(80, 80, 80, 0.15));
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid rgba(180, 180, 180, 0.2);
+            transition: all 0.3s;
+        }
+
+        .location-stat:hover {
+            transform: translateY(-5px);
+            border-color: rgba(200, 200, 200, 0.35);
+            box-shadow: 0 10px 20px rgba(200, 200, 200, 0.08);
+            background: linear-gradient(135deg, rgba(110, 110, 110, 0.3), rgba(90, 90, 90, 0.25));
+        }
+
+        .location-stat-label {
+            color: #999;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .location-stat-value {
+            color: #e0e0e0;
+            font-size: 1.4em;
+            font-weight: 700;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        /* Loading & Error */
+        .loading {
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(200, 200, 200, 0.2);
+            border-top: 3px solid #d8d8d8;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading p {
+            color: #999;
+            margin-top: 20px;
+            font-size: 1.1em;
+        }
+
+        .error {
+            background: rgba(150, 80, 80, 0.15);
+            border: 1px solid #aa6666;
+            border-radius: 12px;
+            color: #d9a9a9;
+            padding: 30px;
+            text-align: center;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .error h3 {
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        /* Section Animation */
+        .info-card, .map-section {
+            opacity: 0;
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .info-card:nth-child(2) { animation-delay: 0.1s; }
+        .info-card:nth-child(3) { animation-delay: 0.2s; }
+        .info-card:nth-child(4) { animation-delay: 0.3s; }
+        .info-card:nth-child(5) { animation-delay: 0.4s; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .card-title {
+                font-size: 1.2em;
+            }
+
+            .info-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .info-value {
+                text-align: left;
+                margin-top: 8px;
+                width: 100%;
+            }
+
+            .info-label {
+                min-width: auto;
+                margin-bottom: 5px;
+            }
+
+            #map {
+                height: 300px;
+            }
+
+            .location-card {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(200, 200, 200, 0.05);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #bbb;
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #999;
+        }
+
+        /* Grid layout for feature cards */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .feature-item {
+            background: linear-gradient(135deg, rgba(80, 80, 80, 0.2), rgba(65, 65, 65, 0.15));
+            padding: 18px;
+            border-radius: 10px;
+            border: 1px solid rgba(180, 180, 180, 0.15);
+            transition: all 0.3s;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-3px);
+            border-color: rgba(200, 200, 200, 0.3);
+            background: linear-gradient(135deg, rgba(90, 90, 90, 0.25), rgba(75, 75, 75, 0.2));
+        }
+
+        .feature-label {
+            color: #999;
+            font-size: 0.8em;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .feature-value {
+            color: #e0e0e0;
+            font-size: 1.1em;
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .feature-status {
+            color: #90ee90;
+        }
+
+        .feature-status.disabled {
+            color: #ff9999;
+        }
+
+        .feature-status.unknown {
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1><span class="visit-emoji">✨</span> Your Visit Analysis</h1>
+            <p>Detailed breakdown of your portfolio visit data</p>
+            <div id="visitorStatus" class="status-badge">🔄 Loading visitor info...</div>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loadingState" class="loading">
+            <div class="loading-spinner"></div>
+            <p id="loadingMessage">Accessing your device information...</p>
+        </div>
+
+        <!-- Content Container (Hidden initially) -->
+        <div id="contentContainer" style="display: none;">
+            <!-- Location Section with Google Maps -->
+            <div class="map-section">
+                <h2 class="card-title">
+                    <i class="fas fa-map-location-dot card-icon"></i> Your Location on Earth
+                </h2>
+                <div id="map"></div>
+                <p class="map-note">
+                    <i class="fas fa-info-circle"></i> Satellite view of your approximate location based on IP geolocation
+                </p>
+                <div class="location-card">
+                    <div class="location-stat">
+                        <div class="location-stat-label">🌍 Country</div>
+                        <div class="location-stat-value" id="country">-</div>
+                    </div>
+                    <div class="location-stat">
+                        <div class="location-stat-label">🏙️ City</div>
+                        <div class="location-stat-value" id="city">-</div>
+                    </div>
+                    <div class="location-stat">
+                        <div class="location-stat-label">⏰ Timezone</div>
+                        <div class="location-stat-value" id="timezone">-</div>
+                    </div>
+                    <div class="location-stat">
+                        <div class="location-stat-label">🌐 ISP</div>
+                        <div class="location-stat-value" id="isp">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Device Information -->
+            <div class="info-card">
+                <h2 class="card-title">
+                    <i class="fas fa-mobile-screen card-icon"></i> Device Details
+                </h2>
+                <div class="info-row">
+                    <span class="info-label">📱 Device Type</span>
+                    <span class="info-value" id="deviceType">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">💻 Operating System</span>
+                    <span class="info-value" id="os">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">📺 Screen Resolution</span>
+                    <span class="info-value value-highlight" id="resolution">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">🧠 Device Memory (RAM)</span>
+                    <span class="info-value value-highlight" id="deviceMemory">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">⚙️ CPU Cores</span>
+                    <span class="info-value value-highlight" id="cpuCores">-</span>
+                </div>
+            </div>
+
+            <!-- Browser & Software -->
+            <div class="info-card">
+                <h2 class="card-title">
+                    <i class="fas fa-compass card-icon"></i> Browser & Software
+                </h2>
+                <div class="info-row">
+                    <span class="info-label">🌐 Browser</span>
+                    <span class="info-value value-highlight" id="browser">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">🗣️ Language</span>
+                    <span class="info-value" id="language">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">🔐 User Agent</span>
+                    <span class="info-value" id="userAgent" style="font-size: 0.85em;">-</span>
+                </div>
+            </div>
+
+            <!-- Network & Connection -->
+            <div class="info-card">
+                <h2 class="card-title">
+                    <i class="fas fa-wifi card-icon"></i> Network Performance
+                </h2>
+                <div class="info-row">
+                    <span class="info-label">🔗 Connection Type</span>
+                    <span class="info-value value-highlight" id="connectionType">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">📡 Network Type</span>
+                    <span class="info-value" id="networkType">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">⚡ Download Speed</span>
+                    <span class="info-value value-highlight" id="downlink">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">🏢 ISP / Organization</span>
+                    <span class="info-value" id="ispFull">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">🔑 IP Address</span>
+                    <span class="info-value value-highlight" id="ip">-</span>
+                </div>
+            </div>
+
+            <!-- Battery (if available) -->
+            <div class="info-card" id="batterySection" style="display: none;">
+                <h2 class="card-title">
+                    <i class="fas fa-battery-three-quarters card-icon"></i> Battery Status
+                </h2>
+                <div class="info-row">
+                    <span class="info-label">🔋 Battery Level</span>
+                    <span class="info-value value-highlight" id="battery">-</span>
+                </div>
+            </div>
+
+            <!-- Hardware & Display Features -->
+            <div class="info-card">
+                <h2 class="card-title">
+                    <i class="fas fa-microchip card-icon"></i> Hardware & Display
+                </h2>
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <div class="feature-label">🎨 Color Depth</div>
+                        <div class="feature-value" id="colorDepth">-</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-label">📊 Pixel Depth</div>
+                        <div class="feature-value" id="pixelDepth">-</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-label">👆 Touch Support</div>
+                        <div class="feature-value feature-status" id="touchSupport">-</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-label">📐 Screen Orientation</div>
+                        <div class="feature-value" id="orientation">-</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-label">🔌 Charging Status</div>
+                        <div class="feature-value feature-status" id="chargingStatus">-</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-label">🔋 Battery Level</div>
+                        <div class="feature-value" id="batteryLevel">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Location Advanced Features -->
+            <div class="info-card">
+                <h2 class="card-title">
+                    <i class="fas fa-location-pin card-icon"></i> Location Details
+                </h2>
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <div class="feature-label">⏱️ Timezone Offset</div>
+                        <div class="feature-value" id="timezoneOffset">-</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-label">🕐 Local Time</div>
+                        <div class="feature-value" id="localTime">-</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-label">📍 GPS Accuracy</div>
+                        <div class="feature-value" id="gpsAccuracy">-</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-label">🌐 Region/State</div>
+                        <div class="feature-value" id="region">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Browser Preferences -->
+            <div class="info-card">
+                <h2 class="card-title">
+                    <i class="fas fa-sliders card-icon"></i> Browser Preferences
+                </h2>
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <div class="feature-label">🌙 Dark Mode</div>
+                        <div class="feature-value feature-status" id="darkMode">-</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-label">🎬 Reduce Motion</div>
+                        <div class="feature-value feature-status" id="reduceMotion">-</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-label">👁️ High Contrast</div>
+                        <div class="feature-value feature-status" id="highContrast">-</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-label">📄 Font Size</div>
+                        <div class="feature-value" id="fontSize">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Network & Performance -->
+            <div class="info-card">
+                <h2 class="card-title">
+                    <i class="fas fa-bolt card-icon"></i> Network Performance
+                </h2>
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <div class="feature-label">⏱️ Page Load Time</div>
+                        <div class="feature-value" id="pageLoadTime">-</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-label">⚡ Time to Interactive</div>
+                        <div class="feature-value" id="timeToInteractive">-</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-label">💾 Save Data Mode</div>
+                        <div class="feature-value feature-status" id="saveDataMode">-</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-label">🔍 RTT (Round Trip)</div>
+                        <div class="feature-value" id="rtt">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Privacy & Security -->
+            <div class="info-card">
+                <h2 class="card-title">
+                    <i class="fas fa-shield card-icon"></i> Privacy & Security
+                </h2>
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <div class="feature-label">🚫 Do Not Track</div>
+                        <div class="feature-value feature-status" id="dntHeader">-</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-label">🍪 Cookies Enabled</div>
+                        <div class="feature-value feature-status" id="cookiesEnabled">-</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-label">💾 Local Storage</div>
+                        <div class="feature-value feature-status" id="localStorageEnabled">-</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-label">🔒 IndexedDB</div>
+                        <div class="feature-value feature-status" id="indexedDBEnabled">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advanced Graphics & Performance -->
+            <div class="info-card">
+                <h2 class="card-title">
+                    <i class="fas fa-cube card-icon"></i> Graphics & Advanced
+                </h2>
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <div class="feature-label">🎮 WebGL Support</div>
+                        <div class="feature-value feature-status" id="webglSupport">-</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-label">🖌️ Canvas Fingerprint</div>
+                        <div class="feature-value" id="canvasFingerprint" style="font-size: 0.9em; word-break: break-all;">-</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-label">🔤 Installed Fonts</div>
+                        <div class="feature-value" id="installedFonts">-</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-label">📱 Device Pixel Ratio</div>
+                        <div class="feature-value" id="devicePixelRatio">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visit Session Details -->
+            <div class="info-card">
+                <h2 class="card-title">
+                    <i class="fas fa-clock card-icon"></i> Visit Session Details
+                </h2>
+                <div class="info-row">
+                    <span class="info-label">⏱️ Visit Time</span>
+                    <span class="info-value" id="timestamp">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">🔗 Referrer Source</span>
+                    <span class="info-value" id="referrer">-</span>
+                </div>
+            </div>
+
+            <!-- Coordinates (if available) -->
+            <div class="info-card" id="coordinatesSection" style="display: none;">
+                <h2 class="card-title">
+                    <i class="fas fa-location-crosshairs card-icon"></i> Precise Coordinates
+                </h2>
+                <div class="info-row">
+                    <span class="info-label">📍 Latitude</span>
+                    <span class="info-value value-highlight" id="latitude">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">📍 Longitude</span>
+                    <span class="info-value value-highlight" id="longitude">-</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error State -->
+        <div id="errorState" style="display: none;">
+            <div class="error">
+                <h3>⚠️ Unable to Load Visit Information</h3>
+                <p>The data could not be retrieved. Please refresh the page or go back to the portfolio.</p>
+            </div>
+        </div>
+    </div>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    <script>
+        function handleMapError() {
+            console.warn('Map API failed to load, using fallback...');
+            useFallbackMap = true;
+        }
+        let useFallbackMap = false;
+        
+        // Check if Leaflet loaded successfully
+        setTimeout(() => {
+            if (typeof L === 'undefined') {
+                console.warn('Leaflet not available, enabling fallback');
+                useFallbackMap = true;
+            }
+        }, 1000);
+        let map;
+        let userVisitData;
+
+        // Get visit data from sessionStorage or use sample data
+        function loadVisitData() {
+            const data = sessionStorage.getItem('visitData');
+            if (data) {
+                userVisitData = JSON.parse(data);
+                startLoadingSequence();
+            } else {
+                // Use sample data if no real data available
+                userVisitData = {
+                    country: 'United States',
+                    city: 'San Francisco',
+                    timezone: 'America/Los_Angeles',
+                    region: 'California',
+                    isp: 'Cloudflare Inc',
+                    deviceType: 'Desktop',
+                    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                    resolution: '1920 x 1080',
+                    deviceMemory: 16,
+                    hardwareConcurrency: 8,
+                    browser: 'Chrome',
+                    language: 'en-US',
+                    connectionType: '4g',
+                    effectiveType: '4g',
+                    downlink: 5.5,
+                    rtt: 25,
+                    ip: '203.0.113.42',
+                    timestamp: new Date().toLocaleString(),
+                    referer: 'Direct',
+                    visitorType: '✨ Demo Visitor',
+                    latitude: 37.7749,
+                    longitude: -122.4194,
+                    battery: '85%',
+                    accuracy: 500
+                };
+                startLoadingSequence();
+                addSampleDataNotice();
+            }
+        }
+
+        // Fun loading sequence with messages
+        function startLoadingSequence() {
+            const loadingMsg = document.getElementById('loadingMessage');
+            const messages = [
+                'Accessing your device information...',
+                'Gathering complete scan... 🔍',
+                'You\'re trapped now.. hu hu hahahahaha 😈',
+            ];
+
+            let msgIndex = 0;
+            const msgInterval = setInterval(() => {
+                if (msgIndex < messages.length) {
+                    loadingMsg.textContent = messages[msgIndex];
+                    msgIndex++;
+                } else {
+                    clearInterval(msgInterval);
+                }
+            }, 1200);
+
+            // Show data after 5 seconds
+            setTimeout(() => {
+                clearInterval(msgInterval);
+                displayVisitData();
+            }, 5000);
+        }
+
+        // Add notice that demo data is being shown
+        function addSampleDataNotice() {
+            const notice = document.createElement('div');
+            notice.style.cssText = 'position: fixed; bottom: 20px; right: 20px; background: rgba(255, 200, 0, 0.2); border: 1px solid #ffc800; color: #ffeb3b; padding: 15px; border-radius: 8px; font-size: 0.9em; z-index: 9999; max-width: 300px;';
+            notice.innerHTML = '<strong>📌 Demo Data:</strong> You opened this page directly. <a href="index.html" style="color: #fff; text-decoration: underline;">Visit the portfolio</a> and click the counter to see your real visit data!';
+            document.body.appendChild(notice);
+        }
+
+        // Format Browser
+        function formatBrowser(ua) {
+            if (!ua) return 'Unknown';
+            const browsers = {
+                'Firefox': 'Mozilla Firefox',
+                'Chrome': 'Google Chrome',
+                'Safari': 'Safari',
+                'Edge': 'Microsoft Edge',
+                'Opera': 'Opera',
+                'MSIE': 'Internet Explorer'
+            };
+            for (let key in browsers) {
+                if (ua.includes(key)) return browsers[key];
+            }
+            return 'Other';
+        }
+
+        // Get Device Type
+        function getDeviceType(ua) {
+            if (!ua) return 'Unknown';
+            if (/mobile|android|iphone|phone/i.test(ua.toLowerCase())) {
+                return '📱 Mobile';
+            } else if (/tablet|ipad/i.test(ua.toLowerCase())) {
+                return '📱 Tablet';
+            }
+            return '🖥️ Desktop';
+        }
+
+        // Get OS
+        function getOS(ua) {
+            if (!ua) return 'Unknown';
+            if (/Windows/i.test(ua)) return '🪟 Windows';
+            if (/Mac/i.test(ua)) return '🍎 macOS';
+            if (/Linux/i.test(ua)) return '🐧 Linux';
+            if (/Android/i.test(ua)) return '🤖 Android';
+            if (/iPhone|iPad/i.test(ua)) return '🍎 iOS';
+            return 'Unknown';
+        }
+
+        // Canvas Fingerprint Generator
+        function getCanvasFingerprint() {
+            try {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                ctx.textBaseline = 'top';
+                ctx.font = '14px Arial';
+                ctx.textBaseline = 'alphabetic';
+                ctx.fillStyle = '#f60';
+                ctx.fillRect(125, 1, 62, 20);
+                ctx.fillStyle = '#069';
+                ctx.fillText('Canvas fingerprint', 2, 15);
+                ctx.fillStyle = 'rgba(102, 204, 0, 0.7)';
+                ctx.fillText('Canvas fingerprint', 4, 17);
+                return canvas.toDataURL().substring(0, 32);
+            } catch {
+                return 'N/A';
+            }
+        }
+
+        // Detect Installed Fonts
+        function detectInstalledFonts() {
+            const testFonts = [
+                'Arial', 'Verdana', 'Times New Roman', 'Courier New', 'Georgia',
+                'Palatino', 'Garamond', 'Bookman', 'Comic Sans MS', 'Trebuchet MS',
+                'Impact', 'Lucida', 'Tahoma', 'Lucida Console', 'Liberation Mono',
+                'DejaVu Sans', 'Bitstream Vera'
+            ];
+            const baseFonts = ['monospace', 'sans-serif', 'serif'];
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const textSize = '72px';
+            let detected = [];
+
+            function textWidth(font) {
+                ctx.font = `${textSize} ${font}`;
+                return ctx.measureText('mmmmmmmmmmlli').width;
+            }
+
+            const baseWidths = {};
+            baseFonts.forEach(font => {
+                baseWidths[font] = textWidth(font);
+            });
+
+            testFonts.forEach(testFont => {
+                let found = false;
+                baseFonts.forEach(baseFont => {
+                    if (Math.abs(textWidth(`'${testFont}', ${baseFont}`) - baseWidths[baseFont]) > 2) {
+                        found = true;
+                    }
+                });
+                if (found) detected.push(testFont);
+            });
+
+            return detected;
+        }
+
+        // Display Visit Data
+        function displayVisitData() {
+            const d = userVisitData;
+
+            // Location
+            document.getElementById('country').textContent = d.country || '-';
+            document.getElementById('city').textContent = d.city || '-';
+            document.getElementById('timezone').textContent = d.timezone || '-';
+            document.getElementById('ip').textContent = d.ip || 'Hidden';
+            document.getElementById('isp').textContent = (d.isp || '-').substring(0, 20);
+            document.getElementById('ispFull').textContent = d.isp || '-';
+
+            // Device
+            document.getElementById('deviceType').textContent = getDeviceType(d.userAgent);
+            document.getElementById('os').textContent = getOS(d.userAgent);
+            document.getElementById('resolution').textContent = d.resolution || '-';
+            document.getElementById('deviceMemory').textContent = d.deviceMemory ? `${d.deviceMemory} GB` : '-';
+            document.getElementById('cpuCores').textContent = d.hardwareConcurrency ? `${d.hardwareConcurrency} Cores` : '-';
+
+            // Browser
+            document.getElementById('browser').textContent = formatBrowser(d.userAgent);
+            document.getElementById('language').textContent = d.language || '-';
+            document.getElementById('userAgent').textContent = d.userAgent || '-';
+
+            // Network
+            document.getElementById('connectionType').textContent = d.connectionType || '-';
+            document.getElementById('networkType').textContent = d.effectiveType || '-';
+            document.getElementById('downlink').textContent = d.downlink ? `${d.downlink} Mbps` : '-';
+
+            // Battery
+            if (d.battery && d.battery !== 'Unknown') {
+                document.getElementById('batterySection').style.display = 'block';
+                document.getElementById('battery').textContent = d.battery;
+            }
+
+            // Hardware & Display Features
+            document.getElementById('colorDepth').textContent = window.screen.colorDepth + ' bits';
+            document.getElementById('pixelDepth').textContent = window.screen.pixelDepth + ' bits';
+            document.getElementById('touchSupport').textContent = ('ontouchstart' in window) ? '✓ Enabled' : '✗ Disabled';
+            document.getElementById('touchSupport').className = ('ontouchstart' in window) ? 'feature-value feature-status' : 'feature-value feature-status disabled';
+            document.getElementById('orientation').textContent = window.screen.orientation ? window.screen.orientation.type : '-';
+            
+            // Battery Status via Battery API
+            if ('getBattery' in navigator) {
+                navigator.getBattery().then(battery => {
+                    document.getElementById('chargingStatus').textContent = battery.charging ? '🔌 Charging' : '🔋 Discharging';
+                    document.getElementById('chargingStatus').className = battery.charging ? 'feature-value feature-status' : 'feature-value feature-status disabled';
+                    document.getElementById('batteryLevel').textContent = Math.round(battery.level * 100) + '%';
+                });
+            } else {
+                document.getElementById('chargingStatus').textContent = 'N/A';
+                document.getElementById('batteryLevel').textContent = 'N/A';
+                document.getElementById('chargingStatus').className = 'feature-value feature-status unknown';
+            }
+
+            // Location Advanced Features
+            document.getElementById('timezoneOffset').textContent = new Date().getTimezoneOffset() + ' minutes';
+            document.getElementById('localTime').textContent = new Date().toLocaleString();
+            document.getElementById('gpsAccuracy').textContent = d.accuracy ? `±${d.accuracy}m` : 'N/A';
+            document.getElementById('region').textContent = d.region || '-';
+
+            // Browser Preferences
+            const darkModeEnabled = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            document.getElementById('darkMode').textContent = darkModeEnabled ? '✓ Enabled' : '✗ Disabled';
+            document.getElementById('darkMode').className = darkModeEnabled ? 'feature-value feature-status' : 'feature-value feature-status disabled';
+
+            const reduceMotionEnabled = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            document.getElementById('reduceMotion').textContent = reduceMotionEnabled ? '✓ Yes' : '✗ No';
+            document.getElementById('reduceMotion').className = reduceMotionEnabled ? 'feature-value feature-status' : 'feature-value feature-status disabled';
+
+            const highContrastEnabled = window.matchMedia && window.matchMedia('(prefers-contrast: more)').matches;
+            document.getElementById('highContrast').textContent = highContrastEnabled ? '✓ Yes' : '✗ No';
+            document.getElementById('highContrast').className = highContrastEnabled ? 'feature-value feature-status' : 'feature-value feature-status disabled';
+
+            // Font size (default is 16px)
+            const fontSize = parseInt(window.getComputedStyle(document.body).fontSize);
+            document.getElementById('fontSize').textContent = fontSize + 'px';
+
+            // Network & Performance
+            if (window.performance && window.performance.timing) {
+                const perfData = window.performance.timing;
+                const pageLoadTime = perfData.loadEventEnd - perfData.navigationStart;
+                const timeToInteractive = perfData.domInteractive - perfData.navigationStart;
+                document.getElementById('pageLoadTime').textContent = pageLoadTime > 0 ? pageLoadTime + 'ms' : 'N/A';
+                document.getElementById('timeToInteractive').textContent = timeToInteractive > 0 ? timeToInteractive + 'ms' : 'N/A';
+            }
+
+            // Save Data Mode
+            const saveDataEnabled = navigator.connection && navigator.connection.saveData;
+            document.getElementById('saveDataMode').textContent = saveDataEnabled ? '✓ Enabled' : '✗ Disabled';
+            document.getElementById('saveDataMode').className = saveDataEnabled ? 'feature-value feature-status' : 'feature-value feature-status disabled';
+
+            // RTT (Round Trip Time)
+            if (navigator.connection && navigator.connection.rtt) {
+                document.getElementById('rtt').textContent = navigator.connection.rtt + 'ms';
+            } else {
+                document.getElementById('rtt').textContent = 'N/A';
+            }
+
+            // Privacy & Security
+            const dnt = navigator.doNotTrack || window.doNotTrack;
+            document.getElementById('dntHeader').textContent = (dnt === '1' || dnt === 'yes') ? '✓ Enabled' : '✗ Disabled';
+            document.getElementById('dntHeader').className = (dnt === '1' || dnt === 'yes') ? 'feature-value feature-status' : 'feature-value feature-status disabled';
+
+            document.getElementById('cookiesEnabled').textContent = navigator.cookieEnabled ? '✓ Yes' : '✗ No';
+            document.getElementById('cookiesEnabled').className = navigator.cookieEnabled ? 'feature-value feature-status' : 'feature-value feature-status disabled';
+
+            const localStorageEnabled = (() => {
+                try {
+                    localStorage.setItem('test', 'test');
+                    localStorage.removeItem('test');
+                    return true;
+                } catch {
+                    return false;
+                }
+            })();
+            document.getElementById('localStorageEnabled').textContent = localStorageEnabled ? '✓ Yes' : '✗ No';
+            document.getElementById('localStorageEnabled').className = localStorageEnabled ? 'feature-value feature-status' : 'feature-value feature-status disabled';
+
+            const indexedDBEnabled = !!window.indexedDB;
+            document.getElementById('indexedDBEnabled').textContent = indexedDBEnabled ? '✓ Yes' : '✗ No';
+            document.getElementById('indexedDBEnabled').className = indexedDBEnabled ? 'feature-value feature-status' : 'feature-value feature-status disabled';
+
+            // Advanced Graphics & Performance
+            const webglSupport = (() => {
+                try {
+                    const canvas = document.createElement('canvas');
+                    return !!(window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
+                } catch {
+                    return false;
+                }
+            })();
+            document.getElementById('webglSupport').textContent = webglSupport ? '✓ Supported' : '✗ Not Supported';
+            document.getElementById('webglSupport').className = webglSupport ? 'feature-value feature-status' : 'feature-value feature-status disabled';
+
+            // Canvas Fingerprint
+            const canvasFingerprint = getCanvasFingerprint();
+            document.getElementById('canvasFingerprint').textContent = canvasFingerprint;
+
+            // Installed Fonts
+            const installedFonts = detectInstalledFonts();
+            document.getElementById('installedFonts').textContent = installedFonts.length + ' detected';
+
+            // Device Pixel Ratio
+            document.getElementById('devicePixelRatio').textContent = window.devicePixelRatio + 'x';
+
+            // Visit Details
+            document.getElementById('timestamp').textContent = d.timestamp || '-';
+            document.getElementById('referrer').textContent = d.referer || 'Direct Visit';
+
+            // Visitor Status
+            const statusText = d.visitorType || '🔄 Returning Visitor';
+            document.getElementById('visitorStatus').textContent = statusText;
+
+            // Coordinates
+            if (d.latitude && d.longitude) {
+                document.getElementById('coordinatesSection').style.display = 'block';
+                document.getElementById('latitude').textContent = parseFloat(d.latitude).toFixed(6);
+                document.getElementById('longitude').textContent = parseFloat(d.longitude).toFixed(6);
+                initMap(parseFloat(d.latitude), parseFloat(d.longitude));
+            } else {
+                initMapDefaultView();
+            }
+
+            // Show content
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('contentContainer').style.display = 'block';
+        }
+
+        // Initialize Leaflet Map with Satellite View (Free Stadia Maps)
+        function initMap(lat, lng) {
+            if (useFallbackMap || typeof L === 'undefined') {
+                initFallbackMap();
+                return;
+            }
+
+            try {
+                // Remove previous map if exists
+                if (map) {
+                    map.remove();
+                }
+
+                // Create Leaflet map
+                map = L.map('map').setView([lat, lng], 13);
+
+                // Use Stadia Maps for satellite view (free with attribution)
+                const satelliteLayer = L.tileLayer(
+                    'https://tiles.stadiamaps.com/tiles/stamen_terrain/{z}/{x}/{y}{r}.png',
+                    {
+                        minZoom: 0,
+                        maxZoom: 18,
+                        attribution: '© Stadia Maps © Stamen Design © OpenMapTiles © OpenStreetMap contributors',
+                        id: 'stadia-terrain'
+                    }
+                ).addTo(map);
+
+                // Add street map option
+                const streetLayer = L.tileLayer(
+                    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    {
+                        attribution: '© OpenStreetMap contributors',
+                        id: 'osm-street'
+                    }
+                );
+
+                // Add custom satellite-like view using USGS imagery
+                const satelliteImagery = L.tileLayer(
+                    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+                    {
+                        attribution: '© Esri, DigitalGlobe, Earthstar Geographics',
+                        maxZoom: 18,
+                        id: 'satellite'
+                    }
+                );
+
+                // Add layer control
+                const baseLayers = {
+                    'Satellite': satelliteImagery,
+                    'Street': streetLayer,
+                    'Terrain': satelliteLayer
+                };
+
+                L.control.layers(baseLayers).addTo(map);
+
+                // Set satellite as default
+                satelliteImagery.addTo(map);
+
+                // Add marker at location
+                L.marker([lat, lng])
+                    .bindPopup('📍 Your Location')
+                    .addTo(map)
+                    .openPopup();
+
+                // Add circle for accuracy
+                L.circleMarker([lat, lng], {
+                    radius: 12,
+                    fillColor: '#d8d8d8',
+                    color: '#bbb',
+                    weight: 2,
+                    opacity: 0.7,
+                    fillOpacity: 0.3
+                }).addTo(map);
+
+                console.log('✓ Leaflet map initialized with satellite view');
+            } catch (error) {
+                console.warn('Map initialization failed:', error);
+                initFallbackMap();
+            }
+        }
+
+        // Fallback map view (without Google Maps API)
+        function initFallbackMap() {
+            const mapDiv = document.getElementById('map');
+            mapDiv.style.background = 'linear-gradient(135deg, rgba(80, 80, 80, 0.5), rgba(60, 60, 60, 0.5))';
+            mapDiv.style.display = 'flex';
+            mapDiv.style.alignItems = 'center';
+            mapDiv.style.justifyContent = 'center';
+            mapDiv.innerHTML = `
+                <div style="text-align: center; color: #999;">
+                    <i class="fas fa-map" style="font-size: 3em; margin-bottom: 15px;"></i>
+                    <p style="font-size: 1.1em; margin: 10px 0;">📍 Location data available</p>
+                    <p style="font-size: 0.9em; color: #777;">Map preview unavailable (API error)</p>
+                    <p style="font-size: 0.85em; color: #666; margin-top: 10px;">See location details below ↓</p>
+                </div>
+            `;
+        }
+
+        // Default Map View (if no coordinates)
+        function initMapDefaultView() {
+            if (useFallbackMap || typeof L === 'undefined') {
+                initFallbackMap();
+                return;
+            }
+
+            try {
+                // Remove previous map if exists
+                if (map) {
+                    map.remove();
+                }
+
+                // Create world map view
+                map = L.map('map').setView([20, 0], 2);
+
+                // Use USGS satellite imagery as default
+                const satelliteImagery = L.tileLayer(
+                    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+                    {
+                        attribution: '© Esri, DigitalGlobe, Earthstar Geographics',
+                        maxZoom: 18
+                    }
+                ).addTo(map);
+
+                // Add street map option
+                const streetLayer = L.tileLayer(
+                    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    {
+                        attribution: '© OpenStreetMap contributors'
+                    }
+                );
+
+                // Add layer control
+                const baseLayers = {
+                    'Satellite': satelliteImagery,
+                    'Street': streetLayer
+                };
+
+                L.control.layers(baseLayers).addTo(map);
+            } catch (error) {
+                console.warn('Default map view failed:', error);
+                initFallbackMap();
+            }
+        }
+
+        // Show Error
+        function showError() {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('errorState').style.display = 'block';
+        }
+
+        // Initialize on Load
+        window.addEventListener('DOMContentLoaded', loadVisitData);
+    </script>
+</body>
+</html>

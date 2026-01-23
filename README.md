@@ -55,9 +55,96 @@ This is a **full-stack portfolio website** that goes beyond static HTML. It incl
 - 🌍 **Geolocation Data** - Country, city, timezone, ISP information
 - ⚡ **Zero-Latency Edge** - Cloudflare's edge network for global performance
 
+### Advanced Analytics Features (my-visit.html)
+The personal visitor analytics page (`my-visit.html`) now displays **25+ detailed data points** across 6 categories:
+
+#### 🎨 Hardware & Display (6 data points)
+- **Color Depth** - Bit depth of display colors (24-bit, 32-bit, etc.)
+- **Pixel Depth** - Color/pixel depth capabilities
+- **Touch Support** - Whether device supports touch input
+- **Screen Orientation** - Current device orientation (portrait/landscape)
+- **Charging Status** - Device charging status (charging/discharging)
+- **Battery Level** - Current battery percentage (0-100%)
+
+#### 📍 Location Details (4 data points)
+- **Timezone Offset** - Difference from UTC in minutes
+- **Local Time** - Visitor's current local time
+- **GPS Accuracy** - Geolocation accuracy radius (in meters)
+- **Region/State** - Geographic region or state information
+
+#### 🎛️ Browser Preferences (4 data points)
+- **Dark Mode** - User's dark mode preference detection
+- **Reduce Motion** - User's accessibility preference for animations
+- **High Contrast** - User's high contrast preference
+- **Font Size** - Computed default font size in pixels
+
+#### ⚡ Network Performance (4 data points)
+- **Page Load Time** - Total time to load the page (milliseconds)
+- **Time to Interactive** - Time until page becomes interactive (ms)
+- **Save Data Mode** - Whether visitor enabled data saving mode
+- **RTT (Round Trip Time)** - Network latency in milliseconds
+
+#### 🔐 Privacy & Security (4 data points)
+- **Do Not Track (DNT)** - Whether visitor has DNT header enabled
+- **Cookies Enabled** - Whether browser accepts cookies
+- **Local Storage Support** - Whether local storage is available
+- **IndexedDB Support** - Whether IndexedDB is available
+
+#### 🎮 Graphics & Advanced (4 data points)
+- **WebGL Support** - GPU rendering capability detection
+- **Canvas Fingerprint** - Unique browser fingerprint from canvas rendering
+- **Installed Fonts** - Detected system fonts from a pool of 17+ standard fonts
+- **Device Pixel Ratio** - Display scaling ratio (1x, 2x Retina, 3x, etc.)
+
 ---
 
-## 📁 Project Structure
+## 📊 Visitor Analytics Dashboard (my-visit.html)
+
+When you open your personal analytics page, you'll see:
+
+1. **5-Second Loading Sequence** - Fun dramatic messages:
+   - "Accessing your device information..."
+   - "Gathering complete scan... 🔍"
+   - "You're trapped now.. hu hu hahahahaha 😈"
+
+2. **Interactive Map** - Shows your location on an interactive Leaflet map with:
+   - 🛰️ Satellite view (USGS/Esri imagery)
+   - 🛣️ Street view (OpenStreetMap)
+   - 🏔️ Terrain view (Stadia Maps)
+
+3. **Location Statistics** - Cards displaying:
+   - Country
+   - City
+   - Timezone
+   - ISP (Internet Service Provider)
+
+4. **Device Information** - Including:
+   - Device type (Mobile/Tablet/Desktop)
+   - Operating system
+   - Screen resolution
+   - RAM/Device memory
+   - CPU cores
+
+5. **Browser & Software** - Showing:
+   - Browser name and version
+   - Language preferences
+   - Complete User-Agent string
+
+6. **Network Performance** - Displaying:
+   - Connection type
+   - Effective network type
+   - Download speed
+   - RTT and other metrics
+
+7. **25+ Advanced Features** - All displayed in beautiful card layouts with:
+   - Status indicators (✓ Enabled / ✗ Disabled)
+   - Color-coded values
+   - Real-time detection using browser APIs
+   - Graceful fallbacks for unsupported features
+
+---
+
+
 
 ```
 sayedunmuntaka.github.io/

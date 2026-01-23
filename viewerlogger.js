@@ -16,7 +16,7 @@ export default {
             return handleGetCount(request, env);
         }
 
-        // Route 2: POST /log — Log visitor info (existing logic)
+        // Route 2: POST /log — Log visitor info
         if (pathname === "/log" && request.method === "POST") {
             return handleLogVisitor(request, env);
         }
