@@ -496,31 +496,27 @@
 
         <!-- Content Container (Hidden initially) -->
         <div id="contentContainer" style="display: none;">
-            <!-- Location Section with Google Maps -->
-            <div class="map-section">
+            <!-- Location Section with Geolocation Map (Hidden if no geolocation) -->
+            <div class="map-section" id="mapSection" style="display: none;">
                 <h2 class="card-title">
                     <i class="fas fa-map-location-dot card-icon"></i> Your Location on Earth
                 </h2>
                 <div id="map"></div>
                 <p class="map-note">
-                    <i class="fas fa-info-circle"></i> Satellite view of your approximate location based on IP geolocation
+                    <i class="fas fa-info-circle"></i> Your precise location from device geolocation
                 </p>
                 <div class="location-card">
                     <div class="location-stat">
-                        <div class="location-stat-label">🌍 Country</div>
-                        <div class="location-stat-value" id="country">-</div>
+                        <div class="location-stat-label">📍 Latitude</div>
+                        <div class="location-stat-value" id="latitude">-</div>
                     </div>
                     <div class="location-stat">
-                        <div class="location-stat-label">🏙️ City</div>
-                        <div class="location-stat-value" id="city">-</div>
+                        <div class="location-stat-label">📍 Longitude</div>
+                        <div class="location-stat-value" id="longitude">-</div>
                     </div>
                     <div class="location-stat">
-                        <div class="location-stat-label">⏰ Timezone</div>
-                        <div class="location-stat-value" id="timezone">-</div>
-                    </div>
-                    <div class="location-stat">
-                        <div class="location-stat-label">🌐 ISP</div>
-                        <div class="location-stat-value" id="isp">-</div>
+                        <div class="location-stat-label">📏 Accuracy</div>
+                        <div class="location-stat-value" id="gpsAccuracy">-</div>
                     </div>
                 </div>
             </div>
@@ -781,28 +777,14 @@
                     <span class="info-value" id="referrer">-</span>
                 </div>
             </div>
-
-            <!-- Coordinates (if available) -->
-            <div class="info-card" id="coordinatesSection" style="display: none;">
-                <h2 class="card-title">
-                    <i class="fas fa-location-crosshairs card-icon"></i> Precise Coordinates
-                </h2>
-                <div class="info-row">
-                    <span class="info-label">📍 Latitude</span>
-                    <span class="info-value value-highlight" id="latitude">-</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">📍 Longitude</span>
-                    <span class="info-value value-highlight" id="longitude">-</span>
-                </div>
-            </div>
         </div>
 
         <!-- Error State -->
         <div id="errorState" style="display: none;">
             <div class="error">
-                <h3>⚠️ Unable to Load Visit Information</h3>
-                <p>The data could not be retrieved. Please refresh the page or go back to the portfolio.</p>
+                <h3>⚠️ No Visit Data Available</h3>
+                <p>Please visit the portfolio and click the counter to log your visit first.</p>
+                <a href="index.html" style="color: #fff; text-decoration: underline; font-weight: bold;">Go to Portfolio</a>
             </div>
         </div>
     </div>
@@ -826,43 +808,26 @@
         let map;
         let userVisitData;
 
-        // Get visit data from sessionStorage or use sample data
+        // Get visit data from sessionStorage ONLY - no demo data
         function loadVisitData() {
             const data = sessionStorage.getItem('visitData');
             if (data) {
-                userVisitData = JSON.parse(data);
-                startLoadingSequence();
+                try {
+                    userVisitData = JSON.parse(data);
+                    startLoadingSequence();
+                } catch (e) {
+                    showNoDataError();
+                }
             } else {
-                // Use sample data if no real data available
-                userVisitData = {
-                    country: 'United States',
-                    city: 'San Francisco',
-                    timezone: 'America/Los_Angeles',
-                    region: 'California',
-                    isp: 'Cloudflare Inc',
-                    deviceType: 'Desktop',
-                    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-                    resolution: '1920 x 1080',
-                    deviceMemory: 16,
-                    hardwareConcurrency: 8,
-                    browser: 'Chrome',
-                    language: 'en-US',
-                    connectionType: '4g',
-                    effectiveType: '4g',
-                    downlink: 5.5,
-                    rtt: 25,
-                    ip: '203.0.113.42',
-                    timestamp: new Date().toLocaleString(),
-                    referer: 'Direct',
-                    visitorType: '✨ Demo Visitor',
-                    latitude: 37.7749,
-                    longitude: -122.4194,
-                    battery: '85%',
-                    accuracy: 500
-                };
-                startLoadingSequence();
-                addSampleDataNotice();
+                showNoDataError();
             }
+        }
+
+        // Show error when no real data available
+        function showNoDataError() {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('contentContainer').style.display = 'none';
+            document.getElementById('errorState').style.display = 'block';
         }
 
         // Fun loading sequence with messages
@@ -889,14 +854,6 @@
                 clearInterval(msgInterval);
                 displayVisitData();
             }, 5000);
-        }
-
-        // Add notice that demo data is being shown
-        function addSampleDataNotice() {
-            const notice = document.createElement('div');
-            notice.style.cssText = 'position: fixed; bottom: 20px; right: 20px; background: rgba(255, 200, 0, 0.2); border: 1px solid #ffc800; color: #ffeb3b; padding: 15px; border-radius: 8px; font-size: 0.9em; z-index: 9999; max-width: 300px;';
-            notice.innerHTML = '<strong>📌 Demo Data:</strong> You opened this page directly. <a href="index.html" style="color: #fff; text-decoration: underline;">Visit the portfolio</a> and click the counter to see your real visit data!';
-            document.body.appendChild(notice);
         }
 
         // Format Browser
@@ -1149,14 +1106,16 @@
             const statusText = d.visitorType || '🔄 Returning Visitor';
             document.getElementById('visitorStatus').textContent = statusText;
 
-            // Coordinates
+            // Geolocation Map - ONLY show if coordinates available
             if (d.latitude && d.longitude) {
-                document.getElementById('coordinatesSection').style.display = 'block';
+                document.getElementById('mapSection').style.display = 'block';
                 document.getElementById('latitude').textContent = parseFloat(d.latitude).toFixed(6);
                 document.getElementById('longitude').textContent = parseFloat(d.longitude).toFixed(6);
+                document.getElementById('gpsAccuracy').textContent = d.accuracy ? `±${d.accuracy}m` : 'Unknown';
                 initMap(parseFloat(d.latitude), parseFloat(d.longitude));
             } else {
-                initMapDefaultView();
+                // Don't show map if no geolocation data
+                document.getElementById('mapSection').style.display = 'none';
             }
 
             // Show content
@@ -1281,51 +1240,7 @@
             `;
         }
 
-        // Default Map View (if no coordinates)
-        function initMapDefaultView() {
-            if (useFallbackMap || typeof L === 'undefined') {
-                initFallbackMap();
-                return;
-            }
-
-            try {
-                // Remove previous map if exists
-                if (map) {
-                    map.remove();
-                }
-
-                // Create world map view
-                map = L.map('map').setView([20, 0], 2);
-
-                // Use USGS satellite imagery as default
-                const satelliteImagery = L.tileLayer(
-                    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-                    {
-                        attribution: '© Esri, DigitalGlobe, Earthstar Geographics',
-                        maxZoom: 18
-                    }
-                ).addTo(map);
-
-                // Add street map option
-                const streetLayer = L.tileLayer(
-                    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                    {
-                        attribution: '© OpenStreetMap contributors'
-                    }
-                );
-
-                // Add layer control
-                const baseLayers = {
-                    'Satellite': satelliteImagery,
-                    'Street': streetLayer
-                };
-
-                L.control.layers(baseLayers).addTo(map);
-            } catch (error) {
-                console.warn('Default map view failed:', error);
-                initFallbackMap();
-            }
-        }
+        // Default Map View (if no coordinates) - REMOVED since we only show geolocation maps
 
         // Show Error
         function showError() {
