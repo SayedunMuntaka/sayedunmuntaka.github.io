@@ -833,14 +833,21 @@
         let map;
         let userVisitData;
 
-        // Get visit data from sessionStorage ONLY - no demo data
+        // Get visit data from sessionStorage or localStorage (for in-app browsers)
         function loadVisitData() {
-            const data = sessionStorage.getItem('visitData');
+            let data = sessionStorage.getItem('visitData');
+            
+            // Fallback to localStorage if sessionStorage is empty (common in in-app browsers)
+            if (!data) {
+                data = localStorage.getItem('visitData');
+            }
+            
             if (data) {
                 try {
                     userVisitData = JSON.parse(data);
                     startLoadingSequence();
                 } catch (e) {
+                    console.error("Error parsing visit data:", e);
                     showNoDataError();
                 }
             } else {

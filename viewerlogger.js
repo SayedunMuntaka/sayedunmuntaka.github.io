@@ -76,42 +76,51 @@ async function handleGetCount(request, env) {
 }
 
 async function handleLogVisitor(request, env) {
-    const origin = request.headers.get("Origin");
-    const allowedOrigin = "https://sayedunmuntaka.github.io";
-
-    if (origin !== allowedOrigin) {
-        return new Response("Origin not allowed", { status: 403 });
+    // Parse POST body as JSON
+    let bodyData = {};
+    try {
+        const body = await request.text();
+        if (body) {
+            bodyData = JSON.parse(body);
+        }
+    } catch (e) {
+        console.error("Error parsing request body:", e);
     }
 
-        // Parse POST body as JSON
-        let bodyData = {};
-        try {
-            const body = await request.text();
-            if (body) {
-                bodyData = JSON.parse(body);
-            }
-        } catch (e) {
-            console.error("Error parsing request body:", e);
-        }
+    const headers = request.headers;
+    const origin = headers.get("Origin");
+    const referer = headers.get("Referer") || "Direct";
+    
+    // Allow requests from main site, in-app browsers, and direct visits
+    // In-app browsers may not have proper origin headers
+    const isAllowedOrigin = !origin || 
+        origin === "https://sayedunmuntaka.github.io" || 
+        origin?.includes("instagram") || 
+        origin?.includes("facebook");
+    
+    const isAllowedReferer = referer === "Direct" || 
+        referer.startsWith("https://sayedunmuntaka.github.io") ||
+        referer.includes("instagram") ||
+        referer.includes("facebook") ||
+        referer.includes("reddit") ||
+        referer.includes("twitter") ||
+        referer.includes("tiktok");
 
-        const headers = request.headers;
-        const ip = headers.get("CF-Connecting-IP") || "Unknown";
-        const country = headers.get("CF-IPCountry") || "Unknown";
-        const city = request.cf?.city || "Unknown";
-        const region = request.cf?.region || "Unknown";
-        const latitude = request.cf?.latitude || "Unknown";
-        const longitude = request.cf?.longitude || "Unknown";
-        const isp = request.cf?.asOrganization || "Unknown";
-        const timezone = request.cf?.timezone || "UTC";
-        const ua = headers.get("User-Agent") || "Unknown";
-        const referer = headers.get("Referer") || "Direct";
-        const language = headers.get("Accept-Language") || "Unknown";
-        const connectionType = headers.get("CF-Visitor") ? JSON.parse(headers.get("CF-Visitor")).scheme : "Unknown";
-        const timestamp = new Date().toLocaleString("en-US", { timeZone: timezone });
+    // Log for debugging
+    console.log(`Request - Origin: ${origin}, Referer: ${referer}`);
 
-        if (referer !== "Direct" && !referer.startsWith("https://sayedunmuntaka.github.io")) {
-            return new Response("Referer not allowed, skipping log.", { status: 403 });
-        }
+    const ip = headers.get("CF-Connecting-IP") || "Unknown";
+    const country = headers.get("CF-IPCountry") || "Unknown";
+    const city = request.cf?.city || "Unknown";
+    const region = request.cf?.region || "Unknown";
+    const latitude = request.cf?.latitude || "Unknown";
+    const longitude = request.cf?.longitude || "Unknown";
+    const isp = request.cf?.asOrganization || "Unknown";
+    const timezone = request.cf?.timezone || "UTC";
+    const ua = headers.get("User-Agent") || "Unknown";
+    const language = headers.get("Accept-Language") || "Unknown";
+    const connectionType = headers.get("CF-Visitor") ? JSON.parse(headers.get("CF-Visitor")).scheme : "Unknown";
+    const timestamp = new Date().toLocaleString("en-US", { timeZone: timezone });
 
 // Support both JSON POST body (new) and URL query params (legacy clients)
     const urlParams = new URL(request.url).searchParams;

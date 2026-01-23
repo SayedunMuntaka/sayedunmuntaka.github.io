@@ -108,6 +108,23 @@
         // Remove undefined properties
         data = Object.fromEntries(Object.entries(data).filter(([_, v]) => v !== undefined));
 
+        // Store backup immediately (for in-app browsers)
+        const backupData = {
+          ...data,
+          timestamp: new Date().toLocaleString(),
+          referer: document.referrer || 'Direct'
+        };
+        try {
+          sessionStorage.setItem('visitData', JSON.stringify(backupData));
+        } catch (e) {
+          console.warn("sessionStorage unavailable, using localStorage:", e);
+          try {
+            localStorage.setItem('visitData', JSON.stringify(backupData));
+          } catch (e2) {
+            console.warn("localStorage also unavailable", e2);
+          }
+        }
+
         console.log("Sending data to log URL:", logURL, data); // Add console log
         try {
         let response = await fetch(logURL, {
@@ -134,7 +151,11 @@
             };
             
             // Save merged data to sessionStorage for my-visit.html
-            sessionStorage.setItem('visitData', JSON.stringify(mergedData));
+            try {
+              sessionStorage.setItem('visitData', JSON.stringify(mergedData));
+            } catch (e) {
+              localStorage.setItem('visitData', JSON.stringify(mergedData));
+            }
             console.log("Visit data saved to sessionStorage:", mergedData);
             
             // store updated count in localStorage for the counter fallback
