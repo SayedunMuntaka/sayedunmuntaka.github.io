@@ -4,7 +4,7 @@
     <title>Sayedun Muntaka</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes">
-    <meta name="description" content="Sayedun Muntaka's professional portfolio showcasing expertise in full-stack development, web design, and digital solutions with real-time visitor analytics.">
+    <meta name="description" content="Sayedun Muntaka's professional portfolio showcasing expertise in full-stack development, web design, and digital solutions.">
     <meta name="author" content="Sayedun Muntaka">
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
     <meta name="theme-color" content="#222">
@@ -13,7 +13,7 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://sayedunmuntaka.github.io">
     <meta property="og:title" content="Sayedun Muntaka | Full Stack Developer & Portfolio">
-    <meta property="og:description" content="Professional portfolio showcasing expertise in full-stack development, web design, and digital solutions with innovative analytics features.">
+    <meta property="og:description" content="Professional portfolio showcasing expertise in full-stack development, web design, and digital solutions.">
     <meta property="og:image" content="https://sayedunmuntaka.github.io/myimg.jpg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
@@ -24,7 +24,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="https://sayedunmuntaka.github.io">
     <meta name="twitter:title" content="Sayedun Muntaka | Full Stack Developer & Portfolio">
-    <meta name="twitter:description" content="Professional portfolio showcasing expertise in full-stack development, web design, and digital solutions with innovative analytics features.">
+    <meta name="twitter:description" content="Professional portfolio showcasing expertise in full-stack development, web design, and digital solutions.">
     <meta name="twitter:image" content="https://sayedunmuntaka.github.io/myimg.jpg">
     <meta name="twitter:creator" content="@SayedunMuntaka">
     <meta name="twitter:site" content="@SayedunMuntaka">
@@ -108,24 +108,8 @@
         // Remove undefined properties
         data = Object.fromEntries(Object.entries(data).filter(([_, v]) => v !== undefined));
 
-        // Store backup immediately (for in-app browsers)
-        const backupData = {
-          ...data,
-          timestamp: new Date().toLocaleString(),
-          referer: document.referrer || 'Direct'
-        };
-        try {
-          sessionStorage.setItem('visitData', JSON.stringify(backupData));
-        } catch (e) {
-          console.warn("sessionStorage unavailable, using localStorage:", e);
-          try {
-            localStorage.setItem('visitData', JSON.stringify(backupData));
-          } catch (e2) {
-            console.warn("localStorage also unavailable", e2);
-          }
-        }
-
-        console.log("Sending data to log URL:", logURL, data); // Add console log
+        // Send visitor data to logging endpoint
+        console.log("Sending data to log URL:", logURL, data);
         try {
         let response = await fetch(logURL, {
           method: "POST",
@@ -150,13 +134,7 @@
               referer: document.referrer || 'Direct'
             };
             
-            // Save merged data to sessionStorage for my-visit.html
-            try {
-              sessionStorage.setItem('visitData', JSON.stringify(mergedData));
-            } catch (e) {
-              localStorage.setItem('visitData', JSON.stringify(mergedData));
-            }
-            console.log("Visit data saved to sessionStorage:", mergedData);
+            // merged server/client data available in respJson.visitorData
             
             // store updated count in localStorage for the counter fallback
             if (respJson.visitorCount !== undefined) {
@@ -165,12 +143,7 @@
             }
           } catch (e) {
             console.log("Logged (no JSON response)");
-            // Fallback: save just the collected data
-            sessionStorage.setItem('visitData', JSON.stringify({
-              ...data,
-              timestamp: new Date().toLocaleString(),
-              referer: document.referrer || 'Direct'
-            }));
+            // Logging succeeded but no JSON returned
           }
         } else {
           console.error("Logging failed", response.statusText);
@@ -257,8 +230,8 @@
     <h2 class="w3-text-light-grey">About Me</h2>
     <hr style="width:200px" class="w3-opacity">
     <p>My name is Sayedun Muntaka <sup>MASUM</sup></p>
-    <p>I’m 23 years old and single</p>
-    <p>Height: 5'09"</p>
+    <p>I’m 22 years old and single</p>
+    <p>Height: 5'11"</p>
     <p>Blood Group: B+</p>
     <p>Religion: Muslim</p>
     <p>Nationality: Bangladeshi</p>
@@ -435,10 +408,9 @@
 <!-- Monthly Visitor Counter -->
 <div class="w3-black w3-padding-32 w3-center" id="monthlyCounterSection">
   <h2 class="w3-text-grey" style="margin-bottom: 20px;">Total Monthly Visitors</h2>
-  <div class="visitor-count-display" style="cursor: pointer;" onclick="openAnalytics()">
+  <div class="visitor-count-display">
     <span class="count-number" id="monthlyCount">0</span>
     <span class="count-label" id="countMonth">Loading...</span>
-    <p style="margin-top: 15px; color: #888; font-size: 0.9em;">Click to view hidden surprise for you.!! →</p>
   </div>
 </div>
 
@@ -517,11 +489,7 @@ function animateNumber(start, end, duration) {
 // Load on page load
 window.addEventListener('DOMContentLoaded', loadMonthlyVisitorCount);
 
-// Open Visit Analytics
-function openAnalytics() {
-  // Load in same tab/window to preserve sessionStorage
-  window.location.href = 'my-visit.html';
-}
+// analytics link removed
 
 </script>
 
@@ -533,8 +501,6 @@ function openAnalytics() {
 
 
 <!-- CREDIT GOES TO W3SCHOOLS FOR THE TEMPLATE.! FEEL FREE TO FORK, MODIFY, UPGRADE AND DEPLOY YOUR OWN PORTFOLIO WEBSITE -->
-
-
 
 
 

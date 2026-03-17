@@ -12,106 +12,18 @@
 ## 📋 Table of Contents
 
 - [Overview](#-overview)
-- [Features](#-features)
-- [Project Structure](#-project-structure)
-- [Technical Architecture](#-technical-architecture)
-- [Quick Start](#-quick-start)
-- [Visitor Logging System](#-visitor-logging-system)
-- [Cloudflare Worker Setup](#-cloudflare-worker-setup)
-- [Customization Guide](#-customization-guide)
-- [Troubleshooting](#-troubleshooting)
-- [License](#-license)
+### Advanced Analytics
+The previous dedicated analytics page (`my-visit.html`) has been removed; visitor logging still runs via Cloudflare Workers and the monthly counter remains on the main site.
 
----
-
-## 🌐 Overview
-
-This is a **full-stack portfolio website** that goes beyond static HTML. It includes:
-
-- ✅ **Responsive Design** - Works seamlessly on desktop, tablet, and mobile
-- ✅ **Real-time Analytics** - Track visitor data in real-time
-- ✅ **Monthly Visitor Counter** - Beautiful animated counter showing current month's visitors
-- ✅ **Device Tracking** - Detailed logging of visitor device information
-- ✅ **Telegram Integration** - Instant notifications for every visit
-- ✅ **Edge Computing** - Powered by Cloudflare Workers for global performance
-
----
-
-## ✨ Features
-
-### Frontend Features
-- 🎨 **Dark Theme Design** - Modern, minimalist aesthetic with W3.CSS
-- 🖼️ **Portfolio Showcase** - Home, About, Education, Photos, Reputation, Contact sections
-- ⬆️ **Back-to-Top Button** - Smooth scroll navigation
-- 📱 **Responsive Sidebar** - Hidden on small screens for better mobile UX
-- 🔄 **Smooth Animations** - Fade-in effects and hover transitions
-- 📊 **Live Visitor Counter** - Displays current month's visitor count with smooth animation
-
-### Backend Features (Cloudflare Workers)
-- 📍 **Real-time Visitor Logging** - Captures comprehensive device & network info
-- 🔐 **CORS & Security** - Origin validation, referrer checks, CSP headers
-- 💾 **KV Storage** - Persistent visitor count tracking per month
-- 🔔 **Telegram Integration** - Automated notifications with detailed visitor stats
-- 🌍 **Geolocation Data** - Country, city, timezone, ISP information
-- ⚡ **Zero-Latency Edge** - Cloudflare's edge network for global performance
-
-### Advanced Analytics Features (my-visit.html)
-The personal visitor analytics page (`my-visit.html`) now displays **25+ detailed data points** across 6 categories:
-
-#### 🎨 Hardware & Display (6 data points)
-- **Color Depth** - Bit depth of display colors (24-bit, 32-bit, etc.)
-- **Pixel Depth** - Color/pixel depth capabilities
-- **Touch Support** - Whether device supports touch input
-- **Screen Orientation** - Current device orientation (portrait/landscape)
-- **Charging Status** - Device charging status (charging/discharging)
-- **Battery Level** - Current battery percentage (0-100%)
-
-#### 📍 Location Details (4 data points)
-- **Timezone Offset** - Difference from UTC in minutes
-- **Local Time** - Visitor's current local time
-- **GPS Accuracy** - Geolocation accuracy radius (in meters)
-- **Region/State** - Geographic region or state information
-
-#### 🎛️ Browser Preferences (4 data points)
-- **Dark Mode** - User's dark mode preference detection
-- **Reduce Motion** - User's accessibility preference for animations
-- **High Contrast** - User's high contrast preference
-- **Font Size** - Computed default font size in pixels
-
-#### ⚡ Network Performance (4 data points)
-- **Page Load Time** - Total time to load the page (milliseconds)
-- **Time to Interactive** - Time until page becomes interactive (ms)
-- **Save Data Mode** - Whether visitor enabled data saving mode
-- **RTT (Round Trip Time)** - Network latency in milliseconds
-
-#### 🔐 Privacy & Security (4 data points)
-- **Do Not Track (DNT)** - Whether visitor has DNT header enabled
-- **Cookies Enabled** - Whether browser accepts cookies
-- **Local Storage Support** - Whether local storage is available
-- **IndexedDB Support** - Whether IndexedDB is available
-
-#### 🎮 Graphics & Advanced (4 data points)
-- **WebGL Support** - GPU rendering capability detection
-- **Canvas Fingerprint** - Unique browser fingerprint from canvas rendering
-- **Installed Fonts** - Detected system fonts from a pool of 17+ standard fonts
-- **Device Pixel Ratio** - Display scaling ratio (1x, 2x Retina, 3x, etc.)
-
----
-
-## 📊 Visitor Analytics Dashboard (my-visit.html)
-
-When you open your personal analytics page, you'll see:
-
-1. **5-Second Loading Sequence** - Fun dramatic messages:
-   - "Accessing your device information..."
-   - "Gathering complete scan... 🔍"
-   - "You're trapped now.. hu hu hahahahaha 😈"
-
-2. **Interactive Map** - Shows your location on an interactive Leaflet map with:
-   - 🛰️ Satellite view (USGS/Esri imagery)
-   - 🛣️ Street view (OpenStreetMap)
-   - 🏔️ Terrain view (Stadia Maps)
-
+```
+sayedunmuntaka.github.io/
+├── index.html              # Main portfolio page (HTML + inline scripts)
+├── styles.css              # Styling (W3.CSS framework + custom)
+├── viewerlogger.js         # Cloudflare Worker (visitor logging + counter API)
+├── fullmonthlogger.js      # Cloudflare Worker (monthly report generator)
+├── README.md               # This file
+└── myimg.jpg               # Avatar image
+```
 3. **Location Statistics** - Cards displaying:
    - Country
    - City
@@ -468,32 +380,7 @@ const allowedOrigin = "https://yourdomain.com"; // Update this
 
 ---
 
-## 🔍 Monitoring & Analytics
-
-### View Live Logs
-
-**Option 1: Telegram Bot**
-- Every visitor automatically sends a message
-- Shows device details, location, network info
-
-**Option 2: Cloudflare Dashboard**
-- Log into [Cloudflare Workers](https://dash.cloudflare.com/)
-- Go to Workers → View logs
-- See request/response activity in real-time
-
-**Option 3: KV Storage**
-```bash
-# List all keys
-wrangler kv:key list --binding=visitor_logs
-
-# Get specific count
-wrangler kv:key get visitor_count_2025-12 --binding=visitor_logs
-
-# List all keys matching pattern
-wrangler kv:key list --binding=visitor_logs --prefix=visitor_count_
-```
-
----
+<!-- Monitoring & analytics details removed -->
 
 ## 🐛 Troubleshooting
 
@@ -579,10 +466,8 @@ See the `LICENSE` file for full details.
 
 Planned enhancements:
 
-- [ ] Analytics dashboard (visitor trends, peak times)
 - [ ] Advanced filtering (filter logs by country, device type)
 - [ ] Device fingerprinting improvements
-- [ ] Custom analytics endpoint
 - [ ] Dark/Light theme toggle
 - [ ] Blog section with CMS integration
 
