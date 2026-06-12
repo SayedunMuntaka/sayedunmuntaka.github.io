@@ -120,363 +120,242 @@ The visitor logger captures:
 | Category | Data Points |
 |----------|-------------|
 | **Device** | Resolution, Memory, Platform, CPU Cores, Model, OS |
-| **Network** | ISP, Country, City, Region, Connection Type, Effective Type, Downlink |
-| **Browser** | User Agent, Browser Type, Language Preference |
-| **Location** | Latitude, Longitude, Timezone, Geolocation (with permission) |
-| **Battery** | Battery percentage & charging status (if available) |
-| **Session** | Visitor type (New/Returning), Referrer, Timestamp |
+# Sayedun Muntaka — Portfolio Website
+
+Comprehensive, responsive personal portfolio with a lightweight analytics integration (Cloudflare Workers + KV). This README explains the site structure, features, how visitor logging works, customization, deployment, and privacy considerations.
+
+![status-active](https://img.shields.io/badge/status-active-brightgreen) ![license-mit](https://img.shields.io/badge/license-MIT-blue) ![w3.css](https://img.shields.io/badge/framework-W3.CSS-blue) ![cloudflare](https://img.shields.io/badge/backend-Cloudflare%20Workers-orange)
 
 ---
 
-## 🚀 Quick Start
+## Table of contents
 
-### Step 1: Clone Repository
-
-```bash
-git clone https://github.com/SayedunMuntaka/sayedunmuntaka.github.io.git
-cd sayedunmuntaka.github.io
-```
-
-### Step 2: Local Preview (Static)
-
-```bash
-# Using Python
-python -m http.server 8000
-
-# Or using Node.js
-npx http-server -p 8000
-```
-
-Then open `http://localhost:8000` in your browser.
-
-> ⚠️ **Note**: Visitor logging requires Cloudflare Worker deployment. Local testing will show errors in the console but won't break the site.
-
-### Step 3: Deploy to GitHub Pages
-
-```bash
-git add .
-git commit -m "Update portfolio"
-git push origin main
-```
-
-Your site will be available at `https://sayedunmuntaka.github.io`
+- Overview
+- Purpose & Features
+- File / Folder Layout
+- How the Frontend Works (`index.html`)
+- Visitor logging: Worker overview (`viewerlogger.js`, `fullmonthlogger.js`)
+- Cloudflare Worker setup & deployment
+- Customization guide
+- Security & privacy
+- Local development & preview
+- Troubleshooting
+- License
 
 ---
 
-## 📊 Visitor Logging System
+## Overview
 
-### How It Works
+This repository contains a single-page portfolio that showcases personal information, skills, photos, contact links, and a monthly visitor counter. The site is static (HTML + CSS) and integrates with Cloudflare Workers to collect optional visitor metadata and to maintain a server-side monthly visitor counter. Optional Telegram notifications are used by the Worker to forward visitor details.
 
-1. **Frontend Collection** (`index.html`, lines 20-100)
-   - Runs on page load
-   - Collects device and network information
-   - POSTs JSON data to Cloudflare Worker
-
-2. **Backend Processing** (`viewerlogger.js`)
-   - **POST /log**: Receives visitor data, validates origin, logs to KV, sends to Telegram
-   - **GET /get-count**: Returns current monthly visitor count (real-time, no caching)
-
-3. **Data Storage** (Cloudflare KV)
-   - **Keys**: `visitor_count_YYYY-MM` (e.g., `visitor_count_2025-12`)
-   - **Keys**: Device IDs with 30-day TTL (determines returning visitors)
-
-4. **Notifications** (Telegram Bot)
-   - Real-time visitor alerts with full device details
-   - Monthly summary reports (optional)
-
-### Monthly Counter
-
-The counter is displayed prominently after the footer:
-
-```html
-<!-- Monthly Visitor Counter -->
-<div class="w3-black w3-padding-32 w3-center" id="monthlyCounterSection">
-  <h2 class="w3-text-grey">Total Monthly Visitors</h2>
-  <div class="visitor-count-display">
-    <span class="count-number" id="monthlyCount">0</span>
-    <span class="count-label" id="countMonth">December 2025</span>
-  </div>
-</div>
-```
-
-**Features**:
-- ✨ Animated counter (0 → actual count)
-- 📱 Responsive (72px desktop, 48px mobile)
-- 🔄 Real-time updates (no caching)
-- 🎨 Matches dark theme aesthetic
+Purpose: provide a modern, accessible portfolio with a subtle analytics counter and an extensible logging backend that the owner controls.
 
 ---
 
-## ⚙️ Cloudflare Worker Setup
+## Purpose & Key features
 
-### Prerequisites
+- Clean, responsive portfolio layout using W3.CSS and custom `styles.css`.
+- Theme toggle (dark / light) with early-init script to avoid flash of wrong theme.
+- Theme-aware images and favicon (swapped between `myimgdark.jpg` and `myimglight.jpg`).
+- Monthly visitor counter shown in the footer area, animated client-side.
+- Visitor logging (optional) via Cloudflare Worker endpoints:
+  - `POST /log` — collect device/network/browser info and increment the monthly counter
+  - `GET /get-count` — return current month count
+- Optional Telegram notifications for each visit (configured in Worker environment variables).
 
-- ✅ Cloudflare account (free tier works)
-- ✅ Telegram bot token (create via [@BotFather](https://t.me/BotFather))
-- ✅ Telegram chat ID
-- ✅ Wrangler CLI installed (`npm install -g wrangler`)
+---
 
-### Step 1: Create KV Namespace
+## File / Folder Layout
 
-```bash
-wrangler kv:namespace create visitor_logs
-wrangler kv:namespace create visitor_logs --preview  # for testing
+Repository root (relevant files):
+
+```
+index.html                # Main static page (HTML + inline scripts)
+styles.css                # Custom styling + W3.CSS usage
+viewerlogger.js           # Cloudflare Worker: /log & /get-count
+fullmonthlogger.js        # Cloudflare Worker: optional monthly summary/report
+README.md                 # This file
+myimgdark.jpg             # Avatar (dark variant)
+myimglight.jpg            # Avatar (light variant)
+myimg.jpg                 # Original avatar (legacy)
 ```
 
-Note the namespace ID — you'll need it for `wrangler.toml`.
+Notes:
+- `index.html` contains the theme switching logic, CSP header, contact links, and the client-side code that posts visitor data to the Worker.
+- Workers are not required for the site to work as a portfolio; they enable analytics and the counter.
 
-### Step 2: Configure wrangler.toml
+---
+
+## How the frontend works (`index.html`)
+
+Key behaviors and where to find them inside `index.html`:
+
+- Theme initialization (early, in <head>):
+  - Reads `localStorage.site-theme` or falls back to `prefers-color-scheme`.
+  - Adds `theme-dark` or `theme-light` class to `<html>` to control CSS variables.
+  - Swaps favicon and apple-touch-icon early to avoid a flash of the wrong icon.
+
+- Theme toggle (bottom of body):
+  - Button with id `themeToggle` toggles between themes and saves choice to `localStorage`.
+  - `setThemeImages()` replaces `src` of elements with `.theme-image` using `data-dark`/`data-light` attributes.
+
+- Images & favicon defaults:
+  - Sidebar avatar and hero image include `data-dark` and `data-light` attributes.
+  - Favicon (`#favicon`) and apple icon (`#appleIcon`) also include `data-dark`/`data-light` and now default to `myimgdark.jpg` in dark mode and `myimglight.jpg` in light mode.
+
+- Visitor logging (client-side):
+  - `sendVisitorInfo()` collects available data via browser APIs (screen, navigator, battery, geolocation when permitted).
+  - `logVisitorInfo()` posts a JSON object to the configured Worker `logURL` (default in code: `https://viewerlogger.shafikkazi25.workers.dev/log`).
+  - The frontend gracefully handles denied geolocation and missing APIs.
+  - A guard `logInProgress` prevents duplicate logs during a single page load.
+
+- Monthly counter:
+  - `loadMonthlyVisitorCount()` calls the Worker `GET /get-count` endpoint and animates the number in the DOM element `#monthlyCount`.
+  - The animation is a simple incrementing timer for a smooth UX.
+
+- Contact links:
+  - To avoid raw exposure of contact strings in the static HTML, links use `data-href` and are converted to `href` on DOMContentLoaded.
+
+---
+
+## Visitor logging: Worker overview (`viewerlogger.js` and `fullmonthlogger.js`)
+
+These Workers are optional backend pieces meant to run on Cloudflare Workers. They provide:
+
+- A `POST /log` endpoint that:
+  - Validates the origin (recommended to set `allowedOrigin` in the Worker).
+  - Constructs a visitor record from posted data and server-side metadata (IP, request geo if available).
+  - Generates a simple device identifier and stores it (or a marker) in KV with a TTL to identify returning visitors.
+  - Increments a per-month key in KV: `visitor_count_YYYY-MM`.
+  - Optionally formats and sends a Telegram message using provided `BOT_TOKEN` and `CHAT_ID`.
+
+- A `GET /get-count` endpoint that returns the current monthly visitor count and month label.
+
+- `fullmonthlogger.js` (optional) can be scheduled (CRON or periodic) to create a monthly report and send a summary to Telegram or store extra analytics in KV.
+
+Storage and keys:
+
+- Monthly count: `visitor_count_<YYYY-MM>` (numeric value stored as string in KV).
+- Device markers: `visitor_<deviceHash>` with TTL (e.g., 30 days) to indicate returning status.
+
+---
+
+## Cloudflare Worker setup & deployment
+
+Prerequisites:
+
+- Cloudflare account
+- Wrangler CLI (`npm i -g wrangler`)
+- Telegram bot token and chat ID (if using Telegram alerts)
+
+Quick steps:
+
+1. Create and bind a KV namespace; record its ID for `wrangler.toml`.
+2. Populate environment variables in `wrangler.toml` or the Cloudflare dashboard:
+   - `BOT_TOKEN` (optional)
+   - `CHAT_ID` (optional)
+3. Deploy Workers with `wrangler publish viewerlogger.js` (and `fullmonthlogger.js` if used).
+4. Update `index.html` `logURL` constant to point at your deployed Worker domain.
+
+Example `wrangler.toml` snippet:
 
 ```toml
 name = "viewerlogger"
 main = "viewerlogger.js"
-compatibility_date = "2024-12-16"
-routes = [
-  { pattern = "viewerlogger.shafikkazi25.workers.dev/*", zone_name = "shafikkazi25.workers.dev" }
-]
+compatibility_date = "2026-01-01"
 
-# KV Namespace Binding
 [[kv_namespaces]]
-binding = "visitor_logs"
+binding = "VISITOR_LOGS"
 id = "YOUR_KV_NAMESPACE_ID"
-preview_id = "YOUR_KV_PREVIEW_ID"
 
-# Environment Variables
 [env.production.vars]
-BOT_TOKEN = "YOUR_TELEGRAM_BOT_TOKEN"
-CHAT_ID = "YOUR_TELEGRAM_CHAT_ID"
+BOT_TOKEN = "<your-bot-token>"
+CHAT_ID = "<your-chat-id>"
 ```
 
-### Step 3: Deploy Worker
+Security note: keep tokens out of git; use environment variables in Cloudflare or secrets in Wrangler.
+
+---
+
+## Customization guide (what to change)
+
+- Replace your name, bio, and contact links in `index.html` header and contact section.
+- Replace images:
+  - `myimgdark.jpg` — avatar for dark mode
+  - `myimglight.jpg` — avatar for light mode
+  - Update `data-dark`/`data-light` attributes on elements with `.theme-image` if you add new images.
+- Update the Worker endpoint in `index.html` if you deploy under a custom domain.
+- Tweak colors and spacing in `styles.css`.
+
+How to change the theme default:
+
+- The early-init script in the `<head>` sets the theme based on `localStorage.site-theme` or the device preference. To force a default, set `localStorage.setItem('site-theme', 'light')` (or `dark`) before the DOM loads.
+
+---
+
+## Security & privacy
+
+- Geolocation: the site requests geolocation only if the browser supports it and the user allows; if denied, no coordinates are sent.
+- Personal data: the site posts device metadata (screen resolution, browser user-agent, approximate geolocation if granted) to the Worker; it does not collect user-entered personal data.
+- Storage: visitor markers and counts are saved in Cloudflare KV; retention is based on TTLs configured in the Worker (e.g., 30 days for return-visitor markers).
+- GDPR / privacy: if you intend to run this publicly, consider adding a short privacy notice and an opt-out for analytics.
+
+---
+
+## Local development & preview
+
+To preview the static site locally:
 
 ```bash
-# Deploy viewerlogger.js
-wrangler publish viewerlogger.js
+# using Python
+python -m http.server 8000
 
-# Deploy fullmonthlogger.js (optional, for monthly reports)
-wrangler publish fullmonthlogger.js
+# or with Node (http-server)
+npx http-server -p 8000
 ```
 
-### Step 4: Update Frontend Endpoint
+Visit `http://localhost:8000`.
 
-In `index.html`, ensure the logging URL matches your Worker:
-
-```javascript
-let logURL = "https://viewerlogger.shafikkazi25.workers.dev/log";
-```
-
-### API Endpoints
-
-#### POST /log
-**Purpose**: Log visitor information
-
-```javascript
-// Request (from frontend)
-POST /log
-Content-Type: application/json
-
-{
-  "resolution": "1920x1080",
-  "battery": "85%",
-  "location": "Country, City",
-  "deviceMemory": "8",
-  "effectiveType": "4g",
-  "downlink": "7.5",
-  "platform": "Linux",
-  "hardwareConcurrency": "8",
-  "userAgent": "Mozilla/5.0..."
-}
-
-// Response
-{
-  "message": "Logged & Sent to Telegram!",
-  "visitorCount": 156
-}
-```
-
-#### GET /get-count
-**Purpose**: Fetch current monthly visitor count
-
-```javascript
-// Request
-GET /get-count
-
-// Response
-{
-  "count": 156,
-  "month": "December 2025",
-  "monthKey": "2025-12"
-}
-```
-
-**Headers**: `Cache-Control: no-cache, no-store, must-revalidate` (real-time)
+Notes:
+- The Worker endpoints won't run locally; logging calls will fail unless you point `logURL` at a reachable endpoint. This is expected during local testing.
 
 ---
 
-## 🎨 Customization Guide
+## Troubleshooting
 
-### Personal Information
+- Counter shows 0:
+  - Verify `logURL` is correct and the Worker is deployed.
+  - Call `GET /get-count` in the browser and inspect the JSON response.
+  - Confirm KV namespace is bound and accessible to the Worker.
 
-**In `index.html`**:
+- Missing device fields:
+  - Some browser APIs are unavailable or require permission (e.g., Battery API or Geolocation). The frontend falls back to "Unknown" for those.
 
-```html
-<!-- Update these sections -->
-<h1>Your Name</h1>
-<p>Your bio and introduction...</p>
-
-<!-- Update contact section -->
-<a href="tel:+YOUR_NUMBER">Your Phone</a>
-<a href="https://www.facebook.com/YOUR_PROFILE">Facebook</a>
-<!-- ... update all social links ... -->
-```
-
-### Styling & Colors
-
-**In `styles.css`**:
-
-```css
-/* Change sidebar color */
-.w3-sidebar {
-  background: #222; /* Change this hex value */
-}
-
-/* Update counter appearance */
-.count-number {
-  font-size: 72px; /* Adjust size */
-  color: #fff; /* Change color */
-}
-
-/* Modify hover effects */
-.count-number:hover {
-  transform: scale(1.05); /* Adjust scale */
-}
-```
-
-### Logging Endpoint
-
-If using a different Worker URL:
-
-```javascript
-// In index.html, line ~60
-let logURL = "https://YOUR_WORKER_URL/log";
-```
-
-### Origin & Security
-
-**In `viewerlogger.js`, line ~75**:
-
-```javascript
-const allowedOrigin = "https://yourdomain.com"; // Update this
-```
-
-**In `index.html`, CSP header**:
-
-```html
-<meta http-equiv="Content-Security-Policy" content="
-  connect-src 'self' https://YOUR_WORKER_URL;
-  ...
-">
-```
+- Telegram messages not arriving:
+  - Verify `BOT_TOKEN` and `CHAT_ID` are set and correct.
+  - Check Cloudflare Worker logs for HTTP errors when calling Telegram API.
 
 ---
 
-<!-- Monitoring & analytics details removed -->
+## Contributing
 
-## 🐛 Troubleshooting
+If you want to improve the site:
 
-### Counter shows "0" or won't update
-
-**Problem**: Counter displays 0 and doesn't increment
-
-**Solutions**:
-1. Check browser console for errors (`F12` → Console tab)
-2. Verify Worker URL in `index.html` is correct
-3. Ensure KV namespace is properly bound in `wrangler.toml`
-4. Test `/get-count` endpoint directly in browser: `https://your-worker.workers.dev/get-count`
-5. Check Cloudflare Worker logs: Dashboard → Workers → View logs
-
-### Device info shows "Unknown" or "N/A"
-
-**Problem**: Telegram messages show missing device details
-
-**Causes & Fixes**:
-- **Battery**: Not all devices report battery (normal)
-- **Geolocation**: User must grant permission (browser prompt)
-- **Network info**: Some networks/browsers don't expose this
-- **Effective Type**: Check browser support (older browsers don't report)
-
-### Logging not working
-
-**Problem**: No visitors are being logged
-
-**Checklist**:
-- [ ] Cloudflare Worker is deployed
-- [ ] KV namespace exists and is bound in `wrangler.toml`
-- [ ] `BOT_TOKEN` and `CHAT_ID` environment variables are set
-- [ ] Origin in `viewerlogger.js` matches your domain
-- [ ] Browser console shows no CORS errors
-
-### "Origin not allowed" error
-
-**Problem**: Console shows 403 error
-
-**Fix**: Update the allowed origin in `viewerlogger.js`:
-
-```javascript
-// Line 75
-const allowedOrigin = "https://yourdomain.com"; // Match your actual domain
-```
-
-### Telegram bot not sending messages
-
-**Problem**: Worker runs but Telegram receives nothing
-
-**Fix**:
-1. Verify `BOT_TOKEN` is correct (no extra spaces)
-2. Verify `CHAT_ID` is correct (get it by messaging bot, checking logs)
-3. Test token: `https://api.telegram.org/botYOUR_TOKEN/getMe`
-4. Check Worker logs for API responses
+1. Fork the repository
+2. Create a feature branch
+3. Make changes and test locally
+4. Submit a pull request describing your changes
 
 ---
 
-## 📞 Contact & Support
+## License
 
-**For questions about this project**:
-- 📧 Direct message on social media (footer links)
-- 🐙 GitHub issues: [sayedunmuntaka.github.io](https://github.com/SayedunMuntaka/sayedunmuntaka.github.io)
-- 💬 Telegram: [@sayedunmuntaka](https://t.me/sayedunmuntaka)
-
-**External Resources**:
-- [Cloudflare Workers Docs](https://developers.cloudflare.com/workers/)
-- [Cloudflare KV Docs](https://developers.cloudflare.com/kv/)
-- [W3.CSS Documentation](https://www.w3schools.com/w3css/)
-- [Telegram Bot API](https://core.telegram.org/bots/api)
+This project is provided under the MIT License. Replace or update the license text if you need a different license.
 
 ---
 
-## 📜 License
+If you'd like, I can also:
 
-This project is licensed under the **MIT License** — feel free to fork, modify, and deploy your own version!
-
-See the `LICENSE` file for full details.
-
----
-
-## 🎯 Future Roadmap
-
-Planned enhancements:
-
-- [ ] Advanced filtering (filter logs by country, device type)
-- [ ] Device fingerprinting improvements
-- [ ] Dark/Light theme toggle
-- [ ] Blog section with CMS integration
-
----
-
-<div align="center">
-
-**Made with ❤️ by [Sayedun Muntaka](https://github.com/SayedunMuntaka)**
-
-⭐ If you find this helpful, consider giving it a star!
-
-</div>
+- Add a short privacy statement to `index.html` linking to this README.
+- Add a development README section with step-by-step Wrangler deployment commands.
+- Preview how the site looks with the new `myimgdark.jpg`/`myimglight.jpg` defaults.
