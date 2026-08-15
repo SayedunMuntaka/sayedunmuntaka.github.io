@@ -1,0 +1,187 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+:root{
+  --bg: #0b0b0c;
+  --surface: #111214;
+  --muted: #9aa0a6;
+  --text: #e6eef6;
+  --accent: #6ee7b7; /* mint */
+  --accent-2: #60a5fa; /* soft blue */
+  --accent-3: #f59e0b; /* warm amber */
+  --card: #0f1720;
+  --glass: rgba(255,255,255,0.03);
+  --shadow: 0 6px 18px rgba(2,6,23,0.6);
+}
+
+/* Light theme overrides */
+.theme-light{
+  --bg: #ffffff;
+  --surface: #fbfbfb;
+  --muted: #6b7280;
+  --text: #0f1720;
+  --accent: #2563eb; /* primary blue on light */
+  --accent-2: #0ea5e9;
+  --accent-3: #f59e0b;
+  --card: #ffffff;
+  --glass: rgba(2,6,23,0.03);
+  --shadow: 0 6px 18px rgba(2,6,23,0.08);
+}
+
+/* Dark theme root when explicitly set */
+.theme-dark /* uses default :root colors */ 
+
+*{box-sizing:border-box}
+body, h1, h2, h3, h4, h5, h6 {font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; margin:0}
+body{background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; transition:background-color .35s ease,color .35s ease}
+
+.w3-row-padding img{margin-bottom:12px; border-radius:8px}
+
+/* Sidebar */
+.w3-sidebar{width:120px; background:linear-gradient(180deg,var(--surface),#0b0b0f); border-right:1px solid rgba(255,255,255,0.03);}
+#main{margin-left:120px}
+@media only screen and (max-width: 800px){#main{margin-left:0}}
+
+html{scroll-behavior:smooth}
+.fade-in{animation:fadeIn .9s ease both}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none}}
+
+/* Header */
+header{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent); padding:40px 24px}
+header h1{font-weight:700; letter-spacing: -1px; margin-bottom:6px}
+header p{color:var(--muted); margin:4px 0}
+
+/* Headings scale and weight */
+h1{font-size:2.6rem}
+h2{font-size:1.4rem; font-weight:600}
+
+
+/* Back to top */
+#backToTop{display:none; position:fixed; bottom:20px; right:22px; z-index:999; background:var(--accent); color:var(--text); border:none; padding:12px 14px; border-radius:10px; box-shadow:var(--shadow); cursor:pointer}
+#backToTop:hover{opacity:.95}
+#backToTop::after{content:'↑'; font-size:18px}
+
+/* Theme toggle */
+#themeToggle{position:fixed; top:18px; right:22px; z-index:1000; background:linear-gradient(180deg,var(--card),var(--surface)); color:var(--text); border:1px solid rgba(255,255,255,0.04); padding:8px 10px; border-radius:999px; box-shadow:var(--shadow); cursor:pointer}
+#themeToggle i{font-size:18px}
+#themeToggle{display:flex; align-items:center; gap:10px; transition:transform .18s ease, background-color .25s ease, box-shadow .25s ease; padding:12px 14px; min-width:48px; min-height:44px;}
+#themeToggle:active{transform:scale(.98)}
+
+/* Toggle icon circle */
+#themeToggle .icon-wrap{width:28px; height:28px; display:inline-grid; place-items:center; border-radius:50%; background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent); transition:transform .32s cubic-bezier(.2,.9,.3,1), background-color .25s ease}
+#themeToggle .icon-wrap i{font-size:14px}
+
+/* show label on wider screens */
+@media (min-width:900px){
+  #themeToggle .toggle-label{display:inline-block; color:var(--text)}
+}
+
+/* Animation when switching themes */
+.theme-switching *{transition:background-color .35s ease,color .35s ease,border-color .35s ease}
+
+/* Ensure light theme overrides explicit W3 colors/classes */
+.theme-light .w3-text-white{color:var(--text) !important}
+.theme-light .w3-text-grey{color:var(--muted) !important}
+.theme-light .w3-text-light-grey{color:var(--muted) !important}
+.theme-light .w3-black{background:var(--card) !important}
+.theme-light .w3-bar, .theme-light .w3-sidebar{background:var(--surface) !important; border-right:1px solid rgba(15,23,32,0.06); box-shadow: 0 6px 20px rgba(2,6,23,0.06);}
+.theme-light .w3-sidebar img{box-shadow:none}
+
+/* Make sidebar links visible in light theme */
+.theme-light .w3-sidebar .w3-button, .theme-light .w3-bar .w3-button{color:var(--text) !important; background:transparent !important}
+.theme-light .w3-sidebar .fa, .theme-light .w3-bar .fa{color:var(--muted) !important}
+.theme-light .w3-sidebar .w3-button:hover{color:var(--accent) !important}
+
+/* Mobile top navbar visibility in light theme */
+.theme-light #myNavbar .w3-bar{background:var(--surface) !important; box-shadow:0 6px 18px rgba(2,6,23,0.06) !important}
+.theme-light #myNavbar .w3-bar .w3-button{color:var(--text) !important}
+.theme-light /* avoid forcing all links to accent color */
+.theme-light .w3-hover-black:hover{color:var(--accent) !important; background:transparent !important}
+
+/* increase click target for sidebar links */
+.sidebar-link{padding:14px 10px}
+
+
+/* Visitor counter */
+.visitor-count-display{display:flex; flex-direction:column; align-items:center; gap:12px; padding:28px 0}
+.count-number{font-size:56px; font-weight:700; color:var(--text); letter-spacing:1px; transition:transform .25s ease}
+.count-number:hover{transform:scale(1.03)}
+.count-label{font-size:14px; color:var(--muted); font-weight:600; text-transform:uppercase}
+
+@media only screen and (max-width:600px){.count-number{font-size:40px}.count-label{font-size:13px}}
+
+/* Footer icons */
+footer a{color:var(--muted); margin-right:12px; transition:color .15s ease}
+footer a:hover{color:var(--accent)}
+
+/* Make anchors inherit surrounding text color by default so they don't flash default blue */
+a{color:inherit}
+
+/* Contact section and specific hero link: remove underline and make bold to indicate clickability */
+#contact a, .hero .hero-card a {
+  text-decoration: none !important;
+  font-weight: 700;
+  color: inherit; /* keep same text color */
+}
+
+/* keep hover affordance: slight accent and no underline */
+#contact a:hover, .hero .hero-card a:hover{ color: var(--accent); text-decoration: none !important }
+
+/* Cards / panels */
+.w3-content, .w3-container{background:transparent}
+
+/* Contact grid */
+.contact-grid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px 18px; margin-top:10px}
+.contact-item{background:var(--glass); border:1px solid rgba(255,255,255,0.03); padding:12px; border-radius:10px}
+.contact-link{display:flex; gap:12px; align-items:center; color:inherit; text-decoration:none}
+.ci-icon{width:48px;height:48px;border-radius:8px;display:grid;place-items:center;background:var(--glass);color:var(--text);font-size:18px}
+.ci-title{display:block;font-weight:700}
+.ci-sub{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+
+@media (max-width:600px){.contact-grid{grid-template-columns:1fr}}
+
+/* Keep existing W3 classes compatibility tweaks */
+.w3-black{background:transparent}
+.w3-text-grey{color:var(--muted)}
+.w3-text-light-grey{color:var(--muted)}
+.w3-hide-small{opacity:1}
+
+/* Modern layout: container and cards */
+.site-container{max-width:1100px; margin:0 auto; padding:28px}
+.hero{display:grid; grid-template-columns:1fr 380px; gap:28px; align-items:center}
+.hero .hero-card{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent); padding:28px; border-radius:12px; box-shadow:var(--shadow); border:1px solid rgba(255,255,255,0.02)}
+.hero .hero-card h1{font-size:2.6rem; margin:0}
+.hero .hero-card p.lead{color:var(--muted); margin-top:8px}
+.hero .hero-image{display:flex; justify-content:center}
+.hero .hero-image img{max-width:100%; border-radius:14px; box-shadow:0 8px 30px rgba(2,6,23,0.45)}
+
+.section-card{background:var(--card); border:1px solid rgba(255,255,255,0.03); padding:22px; border-radius:12px; box-shadow:0 8px 24px rgba(2,6,23,0.45); margin-bottom:22px}
+.section-card h2{margin-top:0}
+
+/* Profile compact sidebar */
+.profile-compact{padding:18px; text-align:center}
+.profile-compact img{width:90%; border-radius:12px; display:block; margin:6px auto}
+.profile-compact .name{font-weight:700; margin-top:8px}
+.profile-compact .role{color:var(--muted); font-size:13px}
+
+.sidebar-link{display:flex; flex-direction:column; align-items:center; gap:6px; padding:12px 8px; color:var(--muted); text-decoration:none}
+.sidebar-link:hover{color:var(--accent); transform:translateY(-2px)}
+
+/* Responsive tweaks */
+@media (max-width:980px){
+  .hero{grid-template-columns:1fr;}
+  .hero .hero-image{order:-1}
+  .w3-sidebar{position:relative;width:100%;display:flex;justify-content:center;padding:12px;border-right:none}
+  #main{margin-left:0}
+}
+
+/* Desktop: place image on left and text to the right, left-align content */
+@media (min-width:981px){
+  .hero{grid-template-columns:380px 1fr; justify-items:start}
+  .hero .hero-image{order:1}
+  .hero .hero-card{order:2; text-align:left}
+}
+
+@media (max-width:600px){
+  .site-container{padding:16px}
+  .w3-sidebar{display:none}
+}

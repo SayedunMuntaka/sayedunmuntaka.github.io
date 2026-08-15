@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Sayedun Muntaka</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes">
+    <meta name="description" content="Sayedun Muntaka's professional portfolio showcasing expertise in full-stack development, web design, and digital solutions.">
+    <meta name="author" content="Sayedun Muntaka">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <meta name="theme-color" content="#222">
+    <meta name="format-detection" content="telephone=no">
+    <script>
+      // Early theme init to follow device preference unless user has chosen
+      (function(){
+        try{
+          var stored = localStorage.getItem('site-theme');
+          var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var theme = stored || (prefersDark ? 'dark' : 'light');
+          var root = document.documentElement;
+          if(theme === 'light'){
+            root.classList.add('theme-light');
+            root.classList.remove('theme-dark');
+          } else {
+            root.classList.add('theme-dark');
+            root.classList.remove('theme-light');
+          }
+              // set favicon early to avoid flash
+              try{
+                var f = document.getElementById('favicon');
+                var a = document.getElementById('appleIcon');
+                if(f){ f.href = (theme === 'light' ? f.getAttribute('data-light') : f.getAttribute('data-dark')) || f.href; }
+                if(a){ a.href = (theme === 'light' ? a.getAttribute('data-light') : a.getAttribute('data-dark')) || a.href; }
+              }catch(e){}
+        }catch(e){}
+      })();
+    </script>
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://sayedunmuntaka.github.io">
+    <meta property="og:title" content="Sayedun Muntaka | Full Stack Developer & Portfolio">
+    <meta property="og:description" content="Professional portfolio showcasing expertise in full-stack development, web design, and digital solutions.">
+    <meta property="og:image" content="https://sayedunmuntaka.github.io/myimg.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="Sayedun Muntaka's Portfolio">
+    <meta property="og:locale" content="en_US">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://sayedunmuntaka.github.io">
+    <meta name="twitter:title" content="Sayedun Muntaka | Full Stack Developer & Portfolio">
+    <meta name="twitter:description" content="Professional portfolio showcasing expertise in full-stack development, web design, and digital solutions.">
+    <meta name="twitter:image" content="https://sayedunmuntaka.github.io/myimg.jpg">
+    <meta name="twitter:creator" content="@SayedunMuntaka">
+    <meta name="twitter:site" content="@SayedunMuntaka">
+    
+    <!-- Favicon -->
+    <link id="favicon" rel="icon" type="image/jpeg" href="myimgdark.jpg" data-dark="myimgdark.jpg" data-light="myimglight.jpg">
+    <link id="appleIcon" rel="apple-touch-icon" href="myimgdark.jpg" data-dark="myimgdark.jpg" data-light="myimglight.jpg">
+    
+    <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    style-src 'self' https://www.w3schools.com https://fonts.googleapis.com https://cdnjs.cloudflare.com 'unsafe-inline';
+    font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com;
+    script-src 'self' https://api.telegram.org 'unsafe-inline';
+    connect-src 'self' https://api.telegram.org https://viewerlogger.shafikkazi25.workers.dev;
+    img-src 'self' https://telegra.ph https://www.w3schools.com data:;
+">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <script>
+    let logInProgress = false; // Flag to prevent duplicate logs
+
+    async function sendVisitorInfo() {
+        if (logInProgress) return; // Check if log in progress
+        logInProgress = true; // Set flag to indicate log in progress
+        console.log("Logging visitor info..."); // Add console log
+        let resolution = screen.width + "x" + screen.height;
+        let batteryStatus = "Unknown";
+        let deviceMemory = navigator.deviceMemory || "Unknown";
+        let networkInfo = navigator.connection || navigator.mozConnection || navigator.webkitConnection || {};
+        let effectiveType = networkInfo.effectiveType || "Unknown";
+        let downlink = networkInfo.downlink || "Unknown";
+        let platform = navigator.platform || "Unknown";
+        let hardwareConcurrency = navigator.hardwareConcurrency || "Unknown";
+        let userAgent = navigator.userAgent || "Unknown";
+        let geoLatitude = null;
+        let geoLongitude = null;
+        let geoAccuracy = null;
+
+        if (navigator.getBattery) {
+            let battery = await navigator.getBattery();
+            batteryStatus = `Level: ${(battery.level * 100)}% | Charging: ${battery.charging ? "Yes" : "No"}`;
+        }
+
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    geoLatitude = position.coords.latitude;
+                    geoLongitude = position.coords.longitude;
+                    geoAccuracy = position.coords.accuracy;
+                    console.log("Geolocation obtained:", geoLatitude, geoLongitude);
+                    logVisitorInfo(resolution, batteryStatus, deviceMemory, effectiveType, downlink, platform, hardwareConcurrency, userAgent, geoLatitude, geoLongitude, geoAccuracy);
+                },
+                (error) => {
+                    console.error("Location access denied", error);
+                    logVisitorInfo(resolution, batteryStatus, deviceMemory, effectiveType, downlink, platform, hardwareConcurrency, userAgent, null, null, null);
+                }
+            );
+        } else {
+            logVisitorInfo(resolution, batteryStatus, deviceMemory, effectiveType, downlink, platform, hardwareConcurrency, userAgent, null, null, null);
+        }
+    }
+
+    async function logVisitorInfo(resolution, batteryStatus, deviceMemory, effectiveType, downlink, platform, hardwareConcurrency, userAgent, geoLatitude, geoLongitude, geoAccuracy) {
+        let logURL = "https://viewerlogger.shafikkazi25.workers.dev/log";
+        let data = {
+            resolution: resolution !== "Unknown" ? resolution : undefined,
+            battery: batteryStatus !== "Unknown" ? batteryStatus : undefined,
+            deviceMemory: deviceMemory !== "Unknown" ? deviceMemory : undefined,
+            effectiveType: effectiveType !== "Unknown" ? effectiveType : undefined,
+            downlink: downlink !== "Unknown" ? downlink : undefined,
+            platform: platform !== "Unknown" ? platform : undefined,
+            hardwareConcurrency: hardwareConcurrency !== "Unknown" ? hardwareConcurrency : undefined,
+            userAgent: userAgent !== "Unknown" ? userAgent : undefined,
+            geoLatitude: geoLatitude || undefined,
+            geoLongitude: geoLongitude || undefined,
+            geoAccuracy: geoAccuracy || undefined
+        };
+
+        // Remove undefined properties
+        data = Object.fromEntries(Object.entries(data).filter(([_, v]) => v !== undefined));
+
+        // Send visitor data to logging endpoint
+        console.log("Sending data to log URL:", logURL, data);
+        try {
+        let response = await fetch(logURL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(data),
+          // use default mode (cors) so we get a proper JSON response
+        });
+
+        if (response.ok) {
+          // Try to parse JSON response (worker now returns JSON with visitorCount & visitorData)
+          try {
+            const respJson = await response.json();
+            console.log("Visitor logged successfully", respJson);
+            
+            // Merge Worker response data with client data for better accuracy
+            const mergedData = {
+              ...data,
+              ...respJson.visitorData, // Server-side data (country, city, IP, etc.)
+              timestamp: new Date().toLocaleString(),
+              referer: document.referrer || 'Direct'
+            };
+            
+            // merged server/client data available in respJson.visitorData
+            
+            // store updated count in localStorage for the counter fallback
+            if (respJson.visitorCount !== undefined) {
+              const monthKey = getMonthKey(new Date());
+              localStorage.setItem(`visitor_count_${monthKey}`, respJson.visitorCount.toString());
+            }
+          } catch (e) {
+            console.log("Logged (no JSON response)");
+            // Logging succeeded but no JSON returned
+          }
+        } else {
+          console.error("Logging failed", response.statusText);
+        }
+        } catch (error) {
+            console.error("Logging failed", error);
+        } finally {
+            logInProgress = false; // Reset the flag after logging attempt
+        }
+    }
+
+    sendVisitorInfo();
+
+    // Back-to-top button functionality
+    window.onscroll = function() {scrollFunction()};
+
+    function scrollFunction() {
+      if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+        document.getElementById("backToTop").style.display = "block";
+      } else {
+        document.getElementById("backToTop").style.display = "none";
+      }
+    }
+
+    function topFunction() {
+      document.body.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
+    }
+
+    </script>  
+  </head>
+
+<body class="w3-black fade-in">
+
+<!-- Theme toggle button -->
+<button id="themeToggle" aria-label="Toggle theme" title="Toggle light / dark mode"><span class="icon-wrap"><i class="fa fa-moon-o"></i></span><span class="toggle-label" style="display:none;margin-left:8px;font-weight:600">Theme</span></button>
+
+<!-- Icon Bar (Sidebar - hidden on small screens) -->
+<nav class="w3-sidebar w3-bar-block w3-small w3-hide-small w3-center">
+  <!-- Avatar image in top left corner -->
+  <img class="theme-image" src="myimgdark.jpg" alt="error while loading" style="width:100%" data-dark="myimgdark.jpg" data-light="myimglight.jpg">
+  <a href="#home" class="w3-bar-item w3-button w3-padding-large w3-black">
+    <i class="fa fa-home w3-xxlarge"></i>
+    <p>HOME</p>
+  </a>
+  <a href="#about" class="w3-bar-item w3-button w3-padding-large w3-hover-black">
+    <i class="fa fa-user w3-xxlarge"></i>
+    <p>ABOUT</p>
+  </a>
+  <a href="#education" class="w3-bar-item w3-button w3-padding-large w3-hover-black">
+    <i class="fa fa-graduation-cap w3-xxlarge"></i>
+    <p>EDUCATION</p>
+  </a>
+  <a href="#photos" class="w3-bar-item w3-button w3-padding-large w3-hover-black">
+    <i class="fa fa-eye w3-xxlarge"></i>
+    <p>PHOTOS</p>
+  </a>
+  <a href="#contact" class="w3-bar-item w3-button w3-padding-large w3-hover-black">
+    <i class="fa fa-envelope w3-xxlarge"></i>
+    <p>CONTACT</p>
+  </a>
+</nav>
+
+<!-- Navbar on small screens (Hidden on medium and large screens) -->
+<div class="w3-top w3-hide-large w3-hide-medium" id="myNavbar">
+  <div class="w3-bar w3-black w3-opacity w3-hover-opacity-off w3-center w3-small">
+    <a href="#home" class="w3-bar-item w3-button" style="width:20% !important">HOME</a>
+    <a href="#about" class="w3-bar-item w3-button" style="width:20% !important">ABOUT</a>
+    <a href="#education" class="w3-bar-item w3-button" style="width:20% !important">EDUCATION</a>
+    <a href="#photos" class="w3-bar-item w3-button" style="width:20% !important">PHOTOS</a>
+    <a href="#contact" class="w3-bar-item w3-button" style="width:20% !important">CONTACT</a>
+  </div>
+</div>
+
+  <!-- Page Content -->
+<div class="w3-padding-large" id="main">
+  <div class="site-container">
+  <!-- Header/Home -->
+  <header class="w3-container w3-padding-32 w3-center hero" id="home">
+    <div class="hero-card">
+      <h1>I'm Sayedun Muntaka</h1>
+      <p class="lead">Vibe coder, hardware enthusiast and photographer.</p>
+      <p class="lead">Working at Meraz IT Solution</p>
+      <p class="lead">Multiplan Center, New Elephant Rd, Dhaka 1205</p>
+    </div>
+    <div class="hero-image">
+      <img class="theme-image" src="myimgdark.jpg" alt="Sayedun Munataka's photo" width="420" height="auto" data-dark="myimgdark.jpg" data-light="myimglight.jpg">
+    </div>
+  </header>
+
+  <!-- About Section -->
+  <div class="w3-content w3-justify w3-text-grey w3-padding-64" id="about">
+    <div class="section-card">
+    <h2 class="w3-text-light-grey">About Me</h2>
+    <hr style="width:200px" class="w3-opacity">
+    <p>My name is Sayedun Muntaka <sup>MASUM</sup></p>
+    <p>Sayedun (سَيِّدٌ)             = A symbol of honor, dignity, and leadership. Representing someone who carries respect and responsibility in character and action.<br><br>
+       Muntaka (مُنْتَقَى)            = Meaning “chosen” or “selected,” It reflects being set apart with purpose, distinction, and intentional design.<br><br>
+       Sayedun Muntaka (سَيِّدٌ مُنْتَقَى) = “A carefully chosen one”</p>
+    <p>I’m 22 years old and single</p>
+    <p>Height: 5'10"</p>
+    <p>Blood Group: B+</p>
+    <p>Religion: Muslim</p>
+    <p>Nationality: Bangladeshi</p>
+    <p>I prefer staying away from Bangladeshi politics.</p>
+    <p>People often think I’m an introvert, and i guess they're right actually.</p>
+    <p>I communicate comfortably in Bangla, Hindi, English, and Urdu.</p>
+    <p>I spend a lot of time exploring Android development, debugging apps, and studying how systems behave beneath the surface.</p>
+    <p>I’m deeply interested in Linux, servers, networking, and understanding how hardware and software communicate at the lowest level.</p>
+    <p>Electronics fascinate me, especially board repair, power systems, and solar/hybrid setups.</p>
+    <p>I like building tools, automating things, and learning through hands-on problem-solving. If something breaks, I track down the root cause — that’s how I learn best.</p>
+    <p>“Bad women are for bad men, and bad men are for bad women. Good women are for good men, and good men are for good women. Good people are innocent of what others say about them. For them there is forgiveness and a respectful, good life.”(Surah An-Nur : 26)</p>
+    <p>“A man who commits adultery will marry only a woman who commits adultery, and a woman who commits adultery will marry only a man who commits adultery.”(Surah An-Nur : 03)</p>
+    <p>So, I hold a firm belief that a man’s partner reflects the strength of his own character. That belief shapes how I live. I keep my principles tight, I don’t let myself slip, and I refuse to compromise on the standards I expect in my future wife. I’m confident in my character, and I expect the same discipline, modesty, good character and self-respect from the person who will share my life.</p>
+    <p>I have no interest in women who flirt, socialize loosely with other men, behave loudly in public, or dance for attention. That kind of lifestyle goes against everything I value. I want a relationship built on dignity, loyalty, and restraint — nothing less.</p>
+    <p>I don’t engage in temporary or illicit relationships. If I choose someone, it will be through marriage, with responsibility and commitment, not casual attachment.</p>
+    <h2 class="w3-text-light-grey">My Skills</h2>
+    <hr style="width:200px" class="w3-opacity">
+    <p class="w3-wide">Web Design</p>
+    <div class="w3-white">
+      <div class="w3-dark-grey" style="height:28px;width:10%"></div>
+    </div>
+    <p class="w3-wide">Photography</p>
+    <div class="w3-white">
+      <div class="w3-dark-grey" style="height:28px;width:40%"></div>
+    </div>
+    <p class="w3-wide">Computer Hardware</p>
+    <div class="w3-white">
+      <div class="w3-dark-grey" style="height:28px;width:73%"></div>
+    </div>
+    <p class="w3-wide">Electrical & Electronics</p>
+    <div class="w3-white">
+      <div class="w3-dark-grey" style="height:28px;width:75%"></div>
+    </div>
+    <p class="w3-wide">Android Development</p>
+    <div class="w3-white">
+      <div class="w3-dark-grey" style="height:28px;width:50%"></div>
+    </div>
+    <p class="w3-wide">Networking</p>
+    <div class="w3-white">
+      <div class="w3-dark-grey" style="height:28px;width:60%"></div>
+    </div><br>
+    
+    <div class="w3-row w3-center w3-padding-16 w3-section w3-light-grey">
+      <div class="w3-quarter w3-section">
+        <span class="w3-xlarge">00</span><br>
+        Partners
+      </div>
+      <div class="w3-quarter w3-section">
+        <span class="w3-xlarge">03+</span><br>
+        Projects Done
+      </div>
+      <div class="w3-quarter w3-section">
+        <span class="w3-xlarge">5+</span><br>
+        Happy Clients
+      </div>
+      <div class="w3-quarter w3-section">
+        <span class="w3-xlarge">13+</span><br>
+        Meetings
+      </div>
+    </div>
+    
+    <!-- Testimonials -->
+    <h3 class="w3-padding-24 w3-text-light-grey">My Reputation</h3>  
+    <img src="https://www.w3schools.com/w3images/bandmember.jpg" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:80px">
+    <p><span class="w3-large w3-margin-right">Abdullah Al Mamun.</span> Principal Of Children Academy</p>
+    <p>Sayedun Muntaka saved us from an ICT Lab Disaster</p><br>
+    
+    <img src="https://www.w3schools.com/w3images/avatar_g2.jpg" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:80px">
+    <p><span class="w3-large w3-margin-right">Tahmina Sultana.</span> Owner Of a Grocery Store</p>
+    <p>No one is better than Muntaka; his magical skills revived our CCTV system</p><br>
+
+    <img src="https://www.w3schools.com/w3images/avatar_smoke.jpg" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:80px">
+    <p><span class="w3-large w3-margin-right">Jane Smith.</span> Photography Client</p>
+    <p>His photography captured our event perfectly. We couldn't be happier with the results.</p><br>
+
+    <img src="https://www.w3schools.com/w3images/avatar2.png" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:80px">
+    <p><span class="w3-large w3-margin-right">Michael Johnson.</span> Hardware Repair Client</p>
+    <p>Muntaka's expertise in computer hardware saved us from a major disaster. Thank you!</p><br>
+
+    <img src="https://www.w3schools.com/w3images/avatar5.png" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:80px">
+    <p><span class="w3-large w3-margin-right">Emily Davis.</span> Electrical & Electronics Client</p>
+    <p>His knowledge in electronics is unparalleled. He fixed our issues in no time.</p><br>
+
+    <img src="https://www.w3schools.com/w3images/team2.jpg" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:80px">
+    <p><span class="w3-large w3-margin-right">John Doe.</span> Networking Client</p>
+    <p>His networking skills are top-notch. Our network has never been more stable.</p><br>
+    
+    <!-- End About Section -->
+    </div>
+    
+    <!-- Education Section -->
+  <div class="w3-padding-64 w3-content w3-text-grey" id="education">
+    <h2 class="w3-text-light-grey">Education</h2>
+    <hr style="width:200px" class="w3-opacity">
+
+
+    <div class="w3-margin-bottom">
+      <h4 class="w3-margin-0">Chandpur Government University College</h4>
+      <p class="w3-small w3-margin-0">University — <strong>Bachelor of Arts (Degree Pass)</strong></p>
+      <p class="w3-small w3-margin-0">Session: 2023 - 2024</p>
+    </div>
+
+    <div class="w3-margin-bottom">
+      <h4 class="w3-margin-0">Chandpur Govt. Technical School &amp; College</h4>
+      <p class="w3-small w3-margin-0">College — <strong>SSC 2020 &amp; HSC 2023</strong></p>
+    </div>
+
+    <div class="w3-margin-bottom">
+      <h4 class="w3-margin-0">Baburhat High School &amp; College</h4>
+      <p class="w3-small w3-margin-0">High School — <strong>JSC 2017</strong></p>
+    </div>
+
+    <div class="w3-margin-bottom">
+      <h4 class="w3-margin-0">Al-Ehsan Cadet Madrasha</h4>
+      <p class="w3-small w3-margin-0">Primary School — <strong>PSC 2014</strong></p>
+    </div>
+  <!-- End Education Section -->
+  </div>
+     
+  <div class="w3-padding-64 w3-content" id="photos">
+    <div class="section-card">
+    <h2 class="w3-text-light-grey">My Photos</h2>
+    <hr style="width:200px" class="w3-opacity">
+
+    <!-- Grid for photos -->
+    <div class="w3-row-padding" style="margin:0 -16px">
+      <div class="w3-half">
+        <img src="https://telegra.ph/file/8c6ab43881216b0a0c081.jpg" style="width:100%">
+        <img src="https://telegra.ph/file/975bbde136742e2b3af6c.jpg" style="width:100%">
+        <img src="https://telegra.ph/file/67a2f46d9f22922c36a16.jpg" style="width:100%">
+        <img src="https://telegra.ph/file/2f73d1ad7217acb961663.jpg" style="width:100%">
+      </div>
+
+      <div class="w3-half">
+        <img src="https://telegra.ph/file/70d57ed3f8eb173fa4689.jpg" style="width:100%">
+        <img src="https://telegra.ph/file/8ba93feb23f8b3aaa9484.jpg" style="width:100%">
+        <img src="https://telegra.ph/file/8243275f28e91594e72f1.jpg" style="width:100%">
+        <img src="https://telegra.ph/file/ab0a54f4530be62295172.jpg" style="width:100%">
+        <img src="https://telegra.ph/file/69bf0a38827c2cf3a66a3.jpg" style="width:100%">
+      </div>
+    <!-- End photo grid -->
+    </div>
+    <!-- End Portfolio Section -->
+    </div>
+  </div>
+
+    <!-- Contact Section -->
+  <div class="w3-padding-64 w3-content w3-text-grey" id="contact">
+    <div class="section-card">
+    <h2 class="w3-text-light-grey">Contact Me</h2>
+    <hr style="width:200px" class="w3-opacity">
+
+  <div class="w3-section"></div>
+    <div class="contact-grid">
+      <div class="contact-item">
+        <a href="https://goo.gl/maps/EtzCcCCjMZkQYnE4A" target="_blank" rel="noopener" class="contact-link">
+          <span class="ci-icon"><i class="fa fa-map-marker"></i></span>
+          <span class="ci-body"><span class="ci-title">Location</span><span class="ci-sub">Chandpur, Chittagong</span></span>
+        </a>
+      </div>
+
+      <div class="contact-item">
+        <a data-href="tel:+8801302048008" class="contact-link" target="_blank" rel="noopener">
+          <span class="ci-icon"><i class="fa fa-phone"></i></span>
+          <span class="ci-body"><span class="ci-title">Phone</span><span class="ci-sub">Tap to call</span></span>
+        </a>
+      </div>
+
+      <div class="contact-item">
+        <a data-href="mailto:shafikkazi25@gmail.com" class="contact-link" target="_blank" rel="noopener">
+          <span class="ci-icon"><i class="fa fa-envelope"></i></span>
+          <span class="ci-body"><span class="ci-title">Email</span><span class="ci-sub">Tap to message</span></span>
+        </a>
+      </div>
+
+      <div class="contact-item">
+        <a data-href="https://wa.me/8801302048008" class="contact-link" target="_blank" rel="noopener">
+          <span class="ci-icon"><i class="fa fa-whatsapp"></i></span>
+          <span class="ci-body"><span class="ci-title">WhatsApp</span><span class="ci-sub">Tap to chat</span></span>
+        </a>
+      </div>
+    </div>
+    </div><br>
+
+  <!-- End Contact Section -->
+
+<button onclick="topFunction()" id="backToTop" title="Go to top"></button>
+
+  <!-- Footer. This section contains social media links and icons, replace with your account's links. -->
+<footer class="w3-content w3-padding-64 w3-text-grey w3-xlarge">
+  <a href="tel:+8801302048008" target="_blank"><i class="fa fa-phone w3-hover-opacity"></i></a>
+  <a href="https://www.facebook.com/sayedunmuntaka" target="_blank"><i class="fa fa-facebook-official w3-hover-opacity"></i></a>
+  <a href="https://www.github.com/SayedunMuntaka" target="_blank"><i class="fa fa-github w3-hover-opacity"></i></a>
+  <a href="https://www.instagram.com/sayedun_muntaka" target="_blank"><i class="fa fa-instagram w3-hover-opacity"></i></a>
+  <a href="https://www.pinterest.com/sayedunmuntaka" target="_blank"><i class="fa fa-pinterest-p w3-hover-opacity"></i></a>
+  <a href="https://x.com/SayedunMuntaka" target="_blank"><span class="w3-hover-opacity" style="font-weight:700; font-size:18px; display:inline-block; width:18px; text-align:center;">X</span></a>
+  <a href="https://www.t.me/sayedunmuntaka" target="_blank"><i class="fa fa-telegram w3-hover-opacity"></i></a>
+  <a href="https://wa.me/8801302048008" target="_blank"><i class="fa fa-whatsapp w3-hover-opacity"></i></a>
+  <a href="https://www.vk.com/sayedunmuntaka" target="_blank"><i class="fa fa-vk w3-hover-opacity"></i></a>
+  <a href="https://www.youtube.com/SAYEDBHAI" target="_blank"><i class="fa fa-youtube w3-hover-opacity"></i></a>
+</footer>
+
+<!-- Monthly Visitor Counter -->
+<div class="w3-black w3-padding-32 w3-center" id="monthlyCounterSection">
+  <h2 class="w3-text-grey" style="margin-bottom: 20px;">Total Monthly Visitors</h2>
+  <div class="visitor-count-display">
+    <span class="count-number" id="monthlyCount">0</span>
+    <span class="count-label" id="countMonth">Loading...</span>
+  </div>
+</div>
+
+<script>
+// When the user scrolls down 20px from the top of the document, show the button
+window.onscroll = function() {scrollFunction()};
+
+function scrollFunction() {
+  if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+    document.getElementById("backToTop").style.display = "block";
+  } else {
+    document.getElementById("backToTop").style.display = "none";
+  }
+}
+
+function topFunction() {
+  document.body.scrollTop = 0;
+  document.documentElement.scrollTop = 0;
+}
+
+// Monthly Visitor Counter
+function getMonthKey(date) {
+  return date.toISOString().slice(0, 7); // Format: YYYY-MM
+}
+
+function formatMonthYear(date) {
+  return date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+}
+
+async function loadMonthlyVisitorCount() {
+  try {
+    const countUrl = "https://viewerlogger.shafikkazi25.workers.dev/get-count";
+    
+    const response = await fetch(countUrl, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+
+    const data = await response.json();
+    
+    if (data.count !== undefined) {
+      animateNumber(0, data.count, 1500);
+      document.getElementById('countMonth').textContent = data.month || formatMonthYear(new Date());
+    } else {
+      document.getElementById('countMonth').textContent = formatMonthYear(new Date());
+      document.getElementById('monthlyCount').textContent = '0';
+    }
+    
+  } catch (error) {
+    console.error('Error loading monthly visitor count:', error);
+    document.getElementById('countMonth').textContent = formatMonthYear(new Date());
+    document.getElementById('monthlyCount').textContent = '0';
+  }
+}
+
+function animateNumber(start, end, duration) {
+  const element = document.getElementById('monthlyCount');
+  const range = end - start;
+  const increment = end > start ? 1 : -1;
+  let current = start;
+  const stepTime = Math.abs(Math.floor(duration / range));
+  
+  const timer = setInterval(() => {
+    current += increment;
+    element.textContent = current;
+    
+    if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
+      element.textContent = end;
+      clearInterval(timer);
+    }
+  }, stepTime);
+}
+
+// Load on page load
+window.addEventListener('DOMContentLoaded', loadMonthlyVisitorCount);
+
+// analytics link removed
+
+</script>
+
+<script>
+  // Attach contact hrefs at runtime to avoid exposing raw contact info in static HTML
+  window.addEventListener('DOMContentLoaded', function(){
+    document.querySelectorAll('[data-href]').forEach(function(el){
+      try{ el.setAttribute('href', el.getAttribute('data-href')); }
+      catch(e){}
+    });
+  });
+</script>
+
+  <!-- END PAGE CONTENT -->
+</div>
+
+<!-- Theme toggle script -->
+<script>
+  (function(){
+    const root = document.documentElement;
+    const btn = document.getElementById('themeToggle');
+    const stored = localStorage.getItem('site-theme');
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    function applyTheme(theme){
+      // remove legacy W3 body class that can force dark colors (if present on body)
+      try{ document.body.classList.remove('w3-black'); }catch(e){}
+      if(theme === 'light'){
+        root.classList.remove('theme-dark');
+        root.classList.add('theme-light');
+        btn.innerHTML = '<span class="icon-wrap"><i class="fa fa-sun-o"></i></span>';
+      } else {
+        root.classList.remove('theme-light');
+        root.classList.add('theme-dark');
+        btn.innerHTML = '<span class="icon-wrap"><i class="fa fa-moon-o"></i></span>';
+      }
+      try{ document.querySelector('meta[name="theme-color"]').setAttribute('content', getComputedStyle(root).getPropertyValue('--bg').trim() || '#222'); }catch(e){}
+      try{ setThemeImages(theme); }catch(e){}
+    }
+
+    function setThemeImages(theme){
+      // swap img.theme-image src
+      document.querySelectorAll('.theme-image').forEach(img => {
+        try{
+          const light = img.getAttribute('data-light');
+          const dark = img.getAttribute('data-dark');
+          if(theme === 'light' && light) img.src = light;
+          else if(theme === 'dark' && dark) img.src = dark;
+        }catch(e){}
+      });
+      // update favicon/apple
+      try{
+        const f = document.getElementById('favicon');
+        const a = document.getElementById('appleIcon');
+        if(f){ f.href = (theme === 'light' ? f.getAttribute('data-light') : f.getAttribute('data-dark')) || f.href; }
+        if(a){ a.href = (theme === 'light' ? a.getAttribute('data-light') : a.getAttribute('data-dark')) || a.href; }
+      }catch(e){}
+    }
+
+    // initialize (respect stored preference; fall back to device)
+    applyTheme(stored || (prefersDark ? 'dark' : 'light'));
+
+    // toggle with small animation
+    btn.addEventListener('click', async ()=>{
+      const isLight = root.classList.contains('theme-light');
+      const next = isLight ? 'dark' : 'light';
+      // add switching class for smooth global transitions
+      root.classList.add('theme-switching');
+      // animate icon
+      const wrap = btn.querySelector('.icon-wrap');
+      if(wrap){ wrap.style.transform = 'rotate(20deg) scale(0.92)'; }
+      localStorage.setItem('site-theme', next);
+      applyTheme(next);
+      await new Promise(r => setTimeout(r, 300));
+      if(wrap){ wrap.style.transform = ''; }
+      setTimeout(()=> root.classList.remove('theme-switching'), 350);
+    });
+  })();
+</script>
+
+</body>
+</html>
+
+
+<!-- CREDIT GOES TO W3SCHOOLS FOR THE TEMPLATE.! FEEL FREE TO FORK, MODIFY, UPGRADE AND DEPLOY YOUR OWN PORTFOLIO WEBSITE -->
+
+
+
+
