@@ -1,648 +1,1026 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Sayedun Muntaka</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes">
-    <meta name="description" content="Sayedun Muntaka's professional portfolio showcasing expertise in full-stack development, web design, and digital solutions.">
-    <meta name="author" content="Sayedun Muntaka">
-    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
-    <meta name="theme-color" content="#222">
-    <meta name="format-detection" content="telephone=no">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Battery Monitoring Dashboard</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header class="topbar">
+        <div class="title-wrap">
+          <div class="logo" aria-hidden="true"></div>
+          <div>
+            <h1>1.2KW Smart Battery</h1>
+            <div class="subtitle">Real-time JBD BMS monitoring • live + compact history</div>
+          </div>
+        </div>
+        <div class="header-actions">
+          <div class="updated-label">Updated <span id="lastUpdated">--</span></div>
+          <div id="connectionBadge" class="status-pill">Connecting…</div>
+        </div>
+      </header>
+
+      <section class="control-layout">
+        <div class="card center-panel">
+          <div class="panel-header compact">
+            <h2 class="panel-title">Power State</h2>
+          </div>
+          <div class="gauge-wrap">
+            <div class="battery-gauge" id="batteryGauge">
+              <div class="gauge-ring"></div>
+              <div class="gauge-inner">
+                <div class="gauge-label">SOC</div>
+                <div class="gauge-value" id="gaugeSoc">--</div>
+                <div class="gauge-unit">%</div>
+              </div>
+            </div>
+          </div>
+          <div class="gauge-meta">
+            <div><span>Mode</span><strong id="gaugeMode">Standby</strong></div>
+            <div><span>Balance</span><strong id="gaugeBalance">Idle</strong></div>
+          </div>
+        </div>
+
+        <div class="card segment-panel">
+          <div class="panel-header compact">
+            <h2 class="panel-title">System Overview</h2>
+          </div>
+          <div class="segment-grid">
+            <div class="segment-card blue">
+              <span>Voltage</span>
+              <strong><span id="voltageValue">--</span> V</strong>
+            </div>
+            <div class="segment-card orange">
+              <span>Current</span>
+              <strong><span id="currentValue">--</span> A</strong>
+            </div>
+            <div class="segment-card green">
+              <span>Power</span>
+              <strong><span id="powerValue">--</span> W</strong>
+            </div>
+            <div class="segment-card purple">
+              <span>SOC</span>
+              <strong><span id="socValue">--</span> %</strong>
+            </div>
+            <div class="segment-card cyan">
+              <span>Capacity</span>
+              <strong><span id="capacityValue">--</span> Ah</strong>
+            </div>
+            <div class="segment-card amber">
+              <span>Energy</span>
+              <strong><span id="energyValue">--</span> Wh</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="analytics-grid">
+        <div class="card analytics-card">
+          <div class="panel-header">
+            <h2 class="panel-title">Battery Analytics</h2>
+          </div>
+          <div class="mini-kpi-grid">
+            <div class="mini-kpi">
+              <span>Min Cell</span>
+              <strong id="minCellValue">-- V</strong>
+            </div>
+            <div class="mini-kpi">
+              <span>Max Cell</span>
+              <strong id="maxCellValue">-- V</strong>
+            </div>
+            <div class="mini-kpi">
+              <span>Cell Delta</span>
+              <strong id="cellDeltaValue">-- V</strong>
+            </div>
+            <div class="mini-kpi">
+              <span>Temp</span>
+              <strong id="tempValue">-- °C</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="card analytics-card">
+          <div class="panel-header">
+            <h2 class="panel-title">Diagnostics</h2>
+          </div>
+          <ul class="diag-list" id="diagnosticList"></ul>
+        </div>
+      </section>
+
+      <section class="main-grid">
+        <div class="card panel chart-panel">
+          <div class="panel-header">
+            <h2 class="panel-title">Trend Analysis</h2>
+          </div>
+          <div id="multiChartGrid" class="multi-chart-grid"></div>
+          <div id="chartTooltip" class="chart-tooltip hidden"></div>
+        </div>
+
+        <div class="card panel">
+          <div class="panel-header">
+            <h2 class="panel-title">Battery Status</h2>
+            <div class="chip"><span class="chip-dot" id="batteryDot"></span><span id="batteryMode">Standby</span></div>
+          </div>
+          <div class="battery-shell">
+            <div class="battery-box">
+              <div class="soc-value" id="socBubble">--%</div>
+              <div class="battery-fill" id="batteryFill"></div>
+            </div>
+            <div class="battery-terminal" aria-hidden="true"></div>
+          </div>
+
+          <div class="summary-stack">
+            <div class="summary-item">
+              <span>Est. time to full</span>
+              <strong id="timeToFull">--</strong>
+            </div>
+            <div class="summary-item">
+              <span>Est. runtime</span>
+              <strong id="timeToEmpty">--</strong>
+            </div>
+            <div class="summary-item">
+              <span>Cell balance</span>
+              <strong id="cellBalance">--</strong>
+            </div>
+          </div>
+
+          <ul class="list" id="statusList"></ul>
+        </div>
+      </section>
+
+      <section class="bottom-grid">
+        <div class="card panel">
+          <div class="panel-header">
+            <h2 class="panel-title">Cell Voltages</h2>
+          </div>
+          <div class="cell-grid" id="cellGrid"></div>
+        </div>
+
+        <div class="card panel">
+          <div class="panel-header">
+            <h2 class="panel-title">7-Day Playback</h2>
+            <div id="historyStatusBadge" class="history-status live">LIVE</div>
+          </div>
+
+          <div class="history-playback">
+            <div class="history-controls">
+              <label>
+                <span>Date</span>
+                <input id="historyDate" type="date" />
+              </label>
+              <label>
+                <span>Time</span>
+                <input id="historyTime" type="time" step="60" />
+              </label>
+              <button id="historyLatestBtn" class="mini-btn">Latest</button>
+              <button id="historyPlayBtn" class="mini-btn">Play</button>
+            </div>
+
+            <div class="slider-row">
+              <input id="historySlider" type="range" min="0" max="0" value="0" />
+            </div>
+
+            <div class="history-meta">
+              <span id="historySelectedLabel">No history</span>
+              <span id="historyCountLabel">0 samples</span>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>V</th>
+                  <th>A</th>
+                  <th>W</th>
+                  <th>SOC</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="historyTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+
     <script>
-      // Early theme init to follow device preference unless user has chosen
-      (function(){
-        try{
-          var stored = localStorage.getItem('site-theme');
-          var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-          var theme = stored || (prefersDark ? 'dark' : 'light');
-          var root = document.documentElement;
-          if(theme === 'light'){
-            root.classList.add('theme-light');
-            root.classList.remove('theme-dark');
-          } else {
-            root.classList.add('theme-dark');
-            root.classList.remove('theme-light');
-          }
-              // set favicon early to avoid flash
-              try{
-                var f = document.getElementById('favicon');
-                var a = document.getElementById('appleIcon');
-                if(f){ f.href = (theme === 'light' ? f.getAttribute('data-light') : f.getAttribute('data-dark')) || f.href; }
-                if(a){ a.href = (theme === 'light' ? a.getAttribute('data-light') : a.getAttribute('data-dark')) || a.href; }
-              }catch(e){}
-        }catch(e){}
-      })();
-    </script>
-    
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://sayedunmuntaka.github.io">
-    <meta property="og:title" content="Sayedun Muntaka | Full Stack Developer & Portfolio">
-    <meta property="og:description" content="Professional portfolio showcasing expertise in full-stack development, web design, and digital solutions.">
-    <meta property="og:image" content="https://sayedunmuntaka.github.io/myimg.jpg">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    <meta property="og:site_name" content="Sayedun Muntaka's Portfolio">
-    <meta property="og:locale" content="en_US">
-    
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="https://sayedunmuntaka.github.io">
-    <meta name="twitter:title" content="Sayedun Muntaka | Full Stack Developer & Portfolio">
-    <meta name="twitter:description" content="Professional portfolio showcasing expertise in full-stack development, web design, and digital solutions.">
-    <meta name="twitter:image" content="https://sayedunmuntaka.github.io/myimg.jpg">
-    <meta name="twitter:creator" content="@SayedunMuntaka">
-    <meta name="twitter:site" content="@SayedunMuntaka">
-    
-    <!-- Favicon -->
-    <link id="favicon" rel="icon" type="image/jpeg" href="myimgdark.jpg" data-dark="myimgdark.jpg" data-light="myimglight.jpg">
-    <link id="appleIcon" rel="apple-touch-icon" href="myimgdark.jpg" data-dark="myimgdark.jpg" data-light="myimglight.jpg">
-    
-    <meta http-equiv="Content-Security-Policy" content="
-    default-src 'self';
-    style-src 'self' https://www.w3schools.com https://fonts.googleapis.com https://cdnjs.cloudflare.com 'unsafe-inline';
-    font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com;
-    script-src 'self' https://api.telegram.org 'unsafe-inline';
-    connect-src 'self' https://api.telegram.org https://viewerlogger.shafikkazi25.workers.dev;
-    img-src 'self' https://telegra.ph https://www.w3schools.com data:;
-">
-    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="styles.css">
-    <script>
-    let logInProgress = false; // Flag to prevent duplicate logs
+      const workerUrl = "https://bmslogger.shafikkazi25.workers.dev";
+      const deviceName = "jbd-bms-ble";
+      const liveRefreshMs = 3000;
+      let lastRecordedTs = null; // Track the last recorded timestamp to prevent duplicates
+      
+      const chartState = { voltage: [], current: [], power: [], soc: [], temp: [] };
+      const seriesColors = {
+        voltage: "#68d7ff",
+        current: "#ffbf69",
+        power: "#77efb3",
+        soc: "#8b7cff",
+        temp: "#f97316"
+      };
+      const visibleSeries = { voltage: true, current: true, power: true, soc: true, temp: true };
+      const historyPlayback = {
+        all: [],
+        currentIndex: 0,
+        timer: null,
+        playing: false
+      };
+      let activeSeries = "voltage";
+      let lastResponse = null;
+      const chartTooltip = document.getElementById("chartTooltip");
 
-    async function sendVisitorInfo() {
-        if (logInProgress) return; // Check if log in progress
-        logInProgress = true; // Set flag to indicate log in progress
-        console.log("Logging visitor info..."); // Add console log
-        let resolution = screen.width + "x" + screen.height;
-        let batteryStatus = "Unknown";
-        let deviceMemory = navigator.deviceMemory || "Unknown";
-        let networkInfo = navigator.connection || navigator.mozConnection || navigator.webkitConnection || {};
-        let effectiveType = networkInfo.effectiveType || "Unknown";
-        let downlink = networkInfo.downlink || "Unknown";
-        let platform = navigator.platform || "Unknown";
-        let hardwareConcurrency = navigator.hardwareConcurrency || "Unknown";
-        let userAgent = navigator.userAgent || "Unknown";
-        let geoLatitude = null;
-        let geoLongitude = null;
-        let geoAccuracy = null;
+      function toLocalDateInput(dateValue) {
+        const date = new Date(dateValue);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+      }
 
-        if (navigator.getBattery) {
-            let battery = await navigator.getBattery();
-            batteryStatus = `Level: ${(battery.level * 100)}% | Charging: ${battery.charging ? "Yes" : "No"}`;
-        }
+      function toLocalTimeInput(dateValue) {
+        const date = new Date(dateValue);
+        const hours = String(date.getHours()).padStart(2, "0");
+        const minutes = String(date.getMinutes()).padStart(2, "0");
+        return `${hours}:${minutes}`;
+      }
 
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    geoLatitude = position.coords.latitude;
-                    geoLongitude = position.coords.longitude;
-                    geoAccuracy = position.coords.accuracy;
-                    console.log("Geolocation obtained:", geoLatitude, geoLongitude);
-                    logVisitorInfo(resolution, batteryStatus, deviceMemory, effectiveType, downlink, platform, hardwareConcurrency, userAgent, geoLatitude, geoLongitude, geoAccuracy);
-                },
-                (error) => {
-                    console.error("Location access denied", error);
-                    logVisitorInfo(resolution, batteryStatus, deviceMemory, effectiveType, downlink, platform, hardwareConcurrency, userAgent, null, null, null);
-                }
-            );
-        } else {
-            logVisitorInfo(resolution, batteryStatus, deviceMemory, effectiveType, downlink, platform, hardwareConcurrency, userAgent, null, null, null);
-        }
-    }
+      function formatNumber(value, digits = 2) {
+        if (value === null || value === undefined || Number.isNaN(Number(value))) return "--";
+        return Number(value).toFixed(digits);
+      }
 
-    async function logVisitorInfo(resolution, batteryStatus, deviceMemory, effectiveType, downlink, platform, hardwareConcurrency, userAgent, geoLatitude, geoLongitude, geoAccuracy) {
-        let logURL = "https://viewerlogger.shafikkazi25.workers.dev/log";
-        let data = {
-            resolution: resolution !== "Unknown" ? resolution : undefined,
-            battery: batteryStatus !== "Unknown" ? batteryStatus : undefined,
-            deviceMemory: deviceMemory !== "Unknown" ? deviceMemory : undefined,
-            effectiveType: effectiveType !== "Unknown" ? effectiveType : undefined,
-            downlink: downlink !== "Unknown" ? downlink : undefined,
-            platform: platform !== "Unknown" ? platform : undefined,
-            hardwareConcurrency: hardwareConcurrency !== "Unknown" ? hardwareConcurrency : undefined,
-            userAgent: userAgent !== "Unknown" ? userAgent : undefined,
-            geoLatitude: geoLatitude || undefined,
-            geoLongitude: geoLongitude || undefined,
-            geoAccuracy: geoAccuracy || undefined
+      function formatTime(value) {
+        if (!value) return "--";
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return "--";
+        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      }
+
+      function setStatusBadge(stateText, statusClass = "good") {
+        const badge = document.getElementById("connectionBadge");
+        badge.textContent = stateText;
+        badge.className = "status-pill" + (statusClass === "offline" ? " offline" : statusClass === "warning" ? " warning" : "");
+      }
+
+      function getCellVoltages(data) {
+        const cellKeys = ["cell_voltage_1", "cell_voltage_2", "cell_voltage_3", "cell_voltage_4", "cell_1", "cell_2", "cell_3", "cell_4"];
+
+        const arrayValues = Array.isArray(data.cell_voltages)
+          ? data.cell_voltages.map((value) => Number(value) || 0)
+          : [];
+
+        const extractedValues = cellKeys
+          .map((key) => Number(data[key]))
+          .filter((value) => Number.isFinite(value) && value > 0);
+
+        return arrayValues.length ? arrayValues : extractedValues;
+      }
+
+      function getCellDelta(data) {
+        const cells = getCellVoltages(data);
+        if (!cells.length) return 0;
+        return Math.max(...cells) - Math.min(...cells);
+      }
+
+      function getCellStats(data) {
+        const cells = getCellVoltages(data);
+        if (!cells.length) return { min: 0, max: 0, delta: 0 };
+        const numeric = cells.map((cell) => Number(cell) || 0).filter((value) => value > 0);
+        if (!numeric.length) return { min: 0, max: 0, delta: 0 };
+        return {
+          min: Math.min(...numeric),
+          max: Math.max(...numeric),
+          delta: Math.max(...numeric) - Math.min(...numeric)
         };
+      }
 
-        // Remove undefined properties
-        data = Object.fromEntries(Object.entries(data).filter(([_, v]) => v !== undefined));
+      function resolveStatusFlags(data) {
+        const current = Number(data.current ?? 0);
+        const voltage = Number(data.total_voltage ?? 0);
 
-        // Send visitor data to logging endpoint
-        console.log("Sending data to log URL:", logURL, data);
-        try {
-        let response = await fetch(logURL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(data),
-          // use default mode (cors) so we get a proper JSON response
+        const isOnline = data.online_status === true || data.online_status === 1 || data.online === true || voltage > 0;
+        const isCharging = data.charging === true || data.charging === 1 || data.is_charging === true || current > 0.1;
+        const isDischarging = data.discharging === true || data.discharging === 1 || data.is_discharging === true || current < -0.1;
+        const isBalancing = data.balancing === true || data.balancing === 1 || data.is_balancing === true;
+
+        return { isOnline, isCharging, isDischarging, isBalancing, current };
+      }
+
+      function renderStatusList(data) {
+        const cellStats = getCellStats(data);
+        const flags = resolveStatusFlags(data);
+
+        const items = [
+          { label: "Online", value: flags.isOnline ? "Online" : "Offline" },
+          { label: "Charging", value: flags.isCharging ? "Active" : "Idle" },
+          { label: "Discharging", value: flags.isDischarging ? "Active" : "Idle" },
+          { label: "Balancing", value: flags.isBalancing ? "Active" : "Idle" },
+          { label: "Temperature", value: `${formatNumber(data.temperature_1 ?? data.temp ?? data.temperature, 1)} °C` },
+          { label: "Cell delta", value: `${formatNumber(cellStats.delta, 3)} V` },
+          { label: "Min / Max cell", value: `${formatNumber(cellStats.min, 3)} / ${formatNumber(cellStats.max, 3)} V` },
+          { label: "Estimated energy", value: `${formatNumber(Math.max(0, Number(data.total_voltage || 0) * Number(resolveCapacityValue(data) || 0)), 0)} Wh` }
+        ];
+
+        const list = document.getElementById("statusList");
+        list.innerHTML = items.map(item => `
+          <li>
+            <span class="label">${item.label}</span>
+            <strong>${item.value}</strong>
+          </li>
+        `).join("");
+      }
+
+      function renderCells(data) {
+        const container = document.getElementById("cellGrid");
+        const cellKeys = ["cell_voltage_1", "cell_voltage_2", "cell_voltage_3", "cell_voltage_4", "cell_1", "cell_2", "cell_3", "cell_4"];
+        let cells = Array.isArray(data.cell_voltages) ? data.cell_voltages : [];
+
+        if (!cells.length) {
+          cells = cellKeys
+            .map((key) => (data[key] !== undefined ? Number(data[key]) : null))
+            .filter((value) => value !== null && !Number.isNaN(value));
+        }
+
+        if (!cells.length) {
+          container.innerHTML = "<div class=\"cell-card\"><div class=\"cell-label\">Cells</div><div class=\"cell-value\">No data</div></div>";
+          return;
+        }
+
+        let maxCellIndex = 0;
+        let minCellIndex = 0;
+        cells.forEach((cell, index) => {
+          if ((Number(cell) || 0) > (Number(cells[maxCellIndex]) || 0)) maxCellIndex = index;
+          if ((Number(cell) || 0) < (Number(cells[minCellIndex]) || 0)) minCellIndex = index;
         });
 
-        if (response.ok) {
-          // Try to parse JSON response (worker now returns JSON with visitorCount & visitorData)
-          try {
-            const respJson = await response.json();
-            console.log("Visitor logged successfully", respJson);
-            
-            // Merge Worker response data with client data for better accuracy
-            const mergedData = {
-              ...data,
-              ...respJson.visitorData, // Server-side data (country, city, IP, etc.)
-              timestamp: new Date().toLocaleString(),
-              referer: document.referrer || 'Direct'
-            };
-            
-            // merged server/client data available in respJson.visitorData
-            
-            // store updated count in localStorage for the counter fallback
-            if (respJson.visitorCount !== undefined) {
-              const monthKey = getMonthKey(new Date());
-              localStorage.setItem(`visitor_count_${monthKey}`, respJson.visitorCount.toString());
-            }
-          } catch (e) {
-            console.log("Logged (no JSON response)");
-            // Logging succeeded but no JSON returned
+        const maxCell = Math.max(...cells.map(v => Number(v) || 0), 3.6);
+        const delta = Math.max(...cells.map(v => Number(v) || 0)) - Math.min(...cells.map(v => Number(v) || 0));
+        const flags = resolveStatusFlags(data);
+
+        container.innerHTML = cells.map((cell, index) => {
+          const percent = Math.min(100, ((Number(cell) || 0) / maxCell) * 100);
+          const isMax = index === maxCellIndex;
+          const isMin = index === minCellIndex;
+          return `
+            <div class="cell-card">
+              <div class="cell-label">Cell ${index + 1}${isMax ? " • max" : ""}${isMin ? " • min" : ""}</div>
+              <div class="cell-value">${formatNumber(cell, 3)} V</div>
+              <div class="cell-bar"><div class="cell-fill" style="width:${percent}%"></div></div>
+            </div>
+          `;
+        }).join("") + `
+          <div class="cell-summary">
+            <div><span>Delta</span><strong>${formatNumber(delta, 3)} V</strong></div>
+            <div><span>Max</span><strong>Cell ${maxCellIndex + 1} · ${formatNumber(cells[maxCellIndex], 3)} V</strong></div>
+            <div><span>Min</span><strong>Cell ${minCellIndex + 1} · ${formatNumber(cells[minCellIndex], 3)} V</strong></div>
+            <div><span>Balancing</span><strong>${flags.isBalancing ? "Active" : "Idle"}</strong></div>
+          </div>
+        `;
+      }
+
+      function formatDuration(minutes) {
+        if (!Number.isFinite(minutes) || minutes <= 0) return "--";
+        const totalMinutes = Math.max(1, Math.round(minutes));
+        const hours = Math.floor(totalMinutes / 60);
+        const mins = totalMinutes % 60;
+        if (hours > 0) return `${hours}h ${mins}m`;
+        return `${mins}m`;
+      }
+
+      function calculateEstimatedTimes(data) {
+        const voltage = Number(data.total_voltage || 0);
+        const current = Number(data.current || 0);
+        const soc = Number(data.state_of_charge || 0);
+        const nominalCapacity = Number(data.nominal_capacity || 0);
+        const remainingCapacity = Number(data.capacity_remaining || 0);
+
+        const capacityForEstimate = remainingCapacity > 0 ? remainingCapacity : (nominalCapacity > 0 ? (nominalCapacity * soc) / 100 : 0);
+
+        const toFull = current > 0 && soc < 100
+          ? ((100 - soc) / 100) * (nominalCapacity > 0 ? nominalCapacity : Math.max(capacityForEstimate || 50, 10)) / Math.max(Math.abs(current), 0.5) * 60
+          : null;
+
+        const toEmpty = current < 0 && soc > 0
+          ? (soc / 100) * (nominalCapacity > 0 ? nominalCapacity : Math.max(capacityForEstimate || 50, 10)) / Math.max(Math.abs(current), 0.5) * 60
+          : null;
+
+        document.getElementById("timeToFull").textContent = formatDuration(toFull);
+        document.getElementById("timeToEmpty").textContent = formatDuration(toEmpty);
+
+        const delta = getCellDelta(data);
+        document.getElementById("cellBalance").textContent = delta > 0 ? `${formatNumber(delta, 3)} V` : "--";
+      }
+
+      function resolveCapacityValue(data) {
+        const candidates = [
+          data.capacity_remaining,
+          data.remaining_capacity,
+          data.capacity,
+          data.capacity_ah,
+          data.remaining_capacity_ah,
+          data.capacityRemaining
+        ];
+
+        const rawCapacity = candidates
+          .map((value) => Number(value ?? 0))
+          .find((value) => value > 0) || 0;
+
+        const nominalCapacity = Number(data.nominal_capacity ?? 0);
+        const soc = Number(data.state_of_charge ?? 0);
+
+        if (rawCapacity > 0) return rawCapacity;
+        if (nominalCapacity > 0 && soc > 0) return (nominalCapacity * soc) / 100;
+        return 0;
+      }
+
+      function updateStatus(data) {
+        const setText = (id, value) => {
+          const el = document.getElementById(id);
+          if (el) el.textContent = value;
+        };
+
+        const flags = resolveStatusFlags(data);
+        const voltage = Number(data.total_voltage ?? 0);
+        const current = flags.current;
+        const power = Number(data.power ?? 0);
+        const soc = Number(data.state_of_charge ?? 0);
+        const temp = Number(data.temperature_1 ?? data.temp ?? data.temperature ?? 0);
+        const capacity = resolveCapacityValue(data);
+        const cellStats = getCellStats(data);
+        const batteryEnergy = Math.max(0, capacity * voltage);
+
+        setText("voltageValue", formatNumber(voltage, 2));
+        setText("currentValue", formatNumber(current, 2));
+        setText("powerValue", formatNumber(power, 0));
+        setText("socValue", formatNumber(soc, 0));
+        setText("gaugeSoc", formatNumber(soc, 0));
+        setText("capacityValue", formatNumber(capacity, 1));
+        setText("energyValue", formatNumber(batteryEnergy, 0));
+        setText("cellDeltaValue", formatNumber(cellStats.delta, 3));
+        setText("minCellValue", `${formatNumber(cellStats.min, 3)} V`);
+        setText("maxCellValue", `${formatNumber(cellStats.max, 3)} V`);
+        setText("tempValue", formatNumber(temp, 1));
+        setText("socBubble", `${formatNumber(soc, 0)}%`);
+
+        const fillHeight = Math.max(0, Math.min(100, soc));
+        const fill = document.getElementById("batteryFill");
+        if (fill) fill.style.height = `${fillHeight}%`;
+
+        const gauge = document.getElementById("batteryGauge");
+        if (gauge) {
+          const safeSoc = Math.max(0, Math.min(100, soc));
+          const angle = (safeSoc / 100) * 360;
+          gauge.style.background = `conic-gradient(from 220deg, var(--accent-2) 0deg ${angle}deg, rgba(255,255,255,0.08) ${angle}deg 360deg)`;
+        }
+
+        let mode = "Standby";
+        if (flags.isCharging) mode = "Charging";
+        else if (flags.isDischarging) mode = "Discharging";
+        else if (flags.isBalancing) mode = "Balancing";
+
+        setText("batteryMode", mode);
+        setText("gaugeMode", mode);
+        setText("gaugeBalance", flags.isBalancing ? "Active" : "Idle");
+
+        const dot = document.getElementById("batteryDot");
+        const dotColor = flags.isDischarging ? "#ffbf69" : flags.isCharging ? "#77efb3" : "#68d7ff";
+        if (dot) {
+          dot.style.background = flags.isOnline ? dotColor : "#ff7187";
+          dot.style.boxShadow = flags.isOnline ? "0 0 18px rgba(119, 239, 179, 0.8)" : "0 0 18px rgba(255, 113, 135, 0.8)";
+        }
+
+        const diagnosticList = document.getElementById("diagnosticList");
+        if (diagnosticList) {
+          diagnosticList.innerHTML = [
+            `<li><span>Pack status</span><strong>${flags.isOnline ? "Connected" : "Offline"}</strong></li>`,
+            `<li><span>Charge mode</span><strong>${flags.isCharging ? "Charging" : "Idle"}</strong></li>`,
+            `<li><span>Load mode</span><strong>${flags.isDischarging ? "Discharging" : "Idle"}</strong></li>`,
+            `<li><span>Cell spread</span><strong>${formatNumber(cellStats.delta, 3)} V</strong></li>`,
+            `<li><span>Temperature</span><strong>${formatNumber(temp, 1)} °C</strong></li>`,
+            `<li><span>Power draw</span><strong>${formatNumber(power, 0)} W</strong></li>`
+          ].join("");
+        }
+
+        setText("lastUpdated", formatTime(data.ts || Date.now()));
+        renderStatusList(data);
+        renderCells(data);
+        calculateEstimatedTimes(data);
+      }
+
+      function resolveBatteryMode(data) {
+        const flags = resolveStatusFlags(data);
+        if (flags.isDischarging) return { mode: "Discharging", color: "warn" };
+        if (flags.isCharging) return { mode: "Charging", color: "good" };
+        return { mode: "Idle", color: "bad" };
+      }
+
+      function renderHistoryTable(history, selectedTs = null) {
+        const tbody = document.getElementById("historyTable");
+        if (!history || !history.length) {
+          tbody.innerHTML = '<tr><td colspan="6">No history yet.</td></tr>';
+          return;
+        }
+
+        // Updated limit to 30 rows
+        const rows = history.slice(-30).reverse();
+        tbody.innerHTML = rows.map((entry) => {
+          const batteryState = resolveBatteryMode(entry);
+          const isSelected = selectedTs !== null && Number(entry.ts) === Number(selectedTs);
+          return `
+            <tr class="${isSelected ? "history-row-selected" : ""}">
+              <td>${formatTime(entry.ts)}</td>
+              <td>${formatNumber(entry.total_voltage, 2)}</td>
+              <td>${formatNumber(entry.current, 2)}</td>
+              <td>${formatNumber(entry.power, 0)}</td>
+              <td>${formatNumber(entry.state_of_charge, 0)}%</td>
+              <td><span class="badge ${batteryState.color}">${batteryState.mode}</span></td>
+            </tr>
+          `;
+        }).join("");
+      }
+
+      function applyHistorySelection(index) {
+        const items = historyPlayback.all;
+        if (!items.length) return;
+
+        const safeIndex = Math.max(0, Math.min(index, items.length - 1));
+        historyPlayback.currentIndex = safeIndex;
+
+        const item = items[safeIndex];
+        const entryDate = new Date(Number(item.ts));
+        document.getElementById("historyDate").value = toLocalDateInput(entryDate);
+        document.getElementById("historyTime").value = toLocalTimeInput(entryDate);
+        document.getElementById("historySlider").value = String(safeIndex);
+        document.getElementById("historySelectedLabel").textContent = formatTime(item.ts);
+        document.getElementById("historyCountLabel").textContent = `${items.length} samples`;
+
+        // Updated limit window to 30 rows
+        const startIndex = Math.max(0, safeIndex - 29);
+        const windowItems = items.slice(startIndex, safeIndex + 1);
+        renderHistoryTable(windowItems, Number(item.ts));
+
+        const isLive = safeIndex === items.length - 1;
+        setHistoryStatus(isLive ? "live" : "manual");
+      }
+
+      function setupPlayback(items) {
+        const slider = document.getElementById("historySlider");
+        const dateInput = document.getElementById("historyDate");
+        const timeInput = document.getElementById("historyTime");
+
+        historyPlayback.all = Array.isArray(items) ? [...items].sort((a, b) => Number(a.ts) - Number(b.ts)) : [];
+
+        if (!historyPlayback.all.length) {
+          slider.max = 0;
+          slider.value = 0;
+          dateInput.value = "";
+          timeInput.value = "";
+          document.getElementById("historySelectedLabel").textContent = "No history";
+          document.getElementById("historyCountLabel").textContent = "0 samples";
+          setHistoryStatus("manual");
+          renderHistoryTable([]);
+          return;
+        }
+
+        slider.max = historyPlayback.all.length - 1;
+        const lastEntry = historyPlayback.all[historyPlayback.all.length - 1];
+        const lastDate = new Date(Number(lastEntry.ts));
+        dateInput.value = toLocalDateInput(lastDate);
+        timeInput.value = toLocalTimeInput(lastDate);
+
+        historyPlayback.currentIndex = historyPlayback.all.length - 1;
+        slider.value = historyPlayback.currentIndex;
+        applyHistorySelection(historyPlayback.currentIndex);
+      }
+
+      function jumpToLatestHistory() {
+        if (!historyPlayback.all.length) return;
+        historyPlayback.currentIndex = historyPlayback.all.length - 1;
+        applyHistorySelection(historyPlayback.currentIndex);
+        document.getElementById("historyStatusBadge").textContent = "LIVE";
+        document.getElementById("historyStatusBadge").className = "history-status live";
+      }
+
+      function setHistoryStatus(mode) {
+        const badge = document.getElementById("historyStatusBadge");
+        if (!badge) return;
+        badge.textContent = mode === "live" ? "LIVE" : "MANUAL";
+        badge.className = `history-status ${mode === "live" ? "live" : "manual"}`;
+      }
+
+      function updatePlaybackFromInputs() {
+        const dateValue = document.getElementById("historyDate").value;
+        const timeValue = document.getElementById("historyTime").value;
+        const items = historyPlayback.all;
+
+        if (!dateValue || !items.length) return;
+
+        const target = new Date(`${dateValue}T${timeValue || "00:00"}`);
+        let nearestIndex = 0;
+        let nearestDiff = Number.MAX_SAFE_INTEGER;
+
+        items.forEach((entry, index) => {
+          const diff = Math.abs(Number(entry.ts) - target.getTime());
+          if (diff < nearestDiff) {
+            nearestDiff = diff;
+            nearestIndex = index;
           }
-        } else {
-          console.error("Logging failed", response.statusText);
+        });
+
+        applyHistorySelection(nearestIndex);
+      }
+
+      function toggleHistoryPlayback() {
+        const items = historyPlayback.all;
+        if (!items.length) return;
+
+        if (historyPlayback.playing) {
+          clearInterval(historyPlayback.timer);
+          historyPlayback.timer = null;
+          historyPlayback.playing = false;
+          document.getElementById("historyPlayBtn").textContent = "Play";
+          return;
         }
+
+        historyPlayback.playing = true;
+        document.getElementById("historyPlayBtn").textContent = "Pause";
+        historyPlayback.timer = setInterval(() => {
+          const nextIndex = (historyPlayback.currentIndex + 1) % items.length;
+          applyHistorySelection(nextIndex);
+        }, 1200);
+      }
+
+      const chartMetricOrder = ["voltage", "current", "power", "soc", "temp"];
+      const chartMetricLabels = {
+        voltage: { label: "Voltage", unit: "V", color: seriesColors.voltage, min: 8, max: 15 },
+        current: { label: "Current", unit: "A", color: seriesColors.current, min: -100, max: 100 },
+        power: { label: "Power", unit: "W", color: seriesColors.power, min: -800, max: 800 },
+        soc: { label: "SOC", unit: "%", color: seriesColors.soc, min: 0, max: 100 },
+        temp: { label: "Temp", unit: "°C", color: seriesColors.temp, min: 0, max: 60 }
+      };
+
+      function buildChartGrid() {
+        const grid = document.getElementById("multiChartGrid");
+        if (!grid) return;
+
+        grid.innerHTML = chartMetricOrder.map((key) => {
+          const meta = chartMetricLabels[key];
+          return `
+            <div class="metric-chart">
+              <div class="metric-chart-header">
+                <span><span class="dot" style="background:${meta.color}"></span> ${meta.label}</span>
+              </div>
+              <canvas id="chart-${key}" width="360" height="180"></canvas>
+            </div>
+          `;
+        }).join("");
+      }
+
+      function drawMetricChart(key, canvas) {
+        const ctx = canvas.getContext("2d");
+        const width = canvas.width;
+        const height = canvas.height;
+        const padding = { top: 26, right: 16, bottom: 34, left: 52 };
+        const plotLeft = padding.left;
+        const plotRight = width - padding.right;
+        const plotTop = padding.top;
+        const plotBottom = height - padding.bottom;
+        const values = Array.isArray(chartState[key]) ? chartState[key] : [];
+        const meta = chartMetricLabels[key];
+
+        ctx.clearRect(0, 0, width, height);
+
+        const bg = ctx.createLinearGradient(0, 0, 0, height);
+        bg.addColorStop(0, "rgba(15, 25, 35, 0.98)");
+        bg.addColorStop(1, "rgba(7, 15, 21, 0.96)");
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, width, height);
+
+        if (!values.length) {
+          ctx.fillStyle = "rgba(255,255,255,0.45)";
+          ctx.font = "12px sans-serif";
+          ctx.textAlign = "left";
+          ctx.fillText("Waiting for data...", plotLeft, height / 2);
+          return;
+        }
+
+        const yValues = values.map((point) => Number(point.y) || 0);
+        const xValues = values.map((point) => Number(point.x) || Date.now());
+        const rangeMin = Math.min(...yValues, meta.min);
+        const rangeMax = Math.max(...yValues, meta.max);
+        const yRange = Math.max(rangeMax - rangeMin, 0.0001);
+        const timeMin = Math.min(...xValues);
+        const timeMax = Math.max(...xValues);
+        const timeRange = Math.max(timeMax - timeMin, 1);
+
+        ctx.strokeStyle = "rgba(148, 163, 184, 0.18)";
+        ctx.lineWidth = 1;
+        for (let i = 0; i <= 5; i++) {
+          const y = plotTop + ((plotBottom - plotTop) * i) / 5;
+          ctx.beginPath();
+          ctx.moveTo(plotLeft, y);
+          ctx.lineTo(plotRight, y);
+          ctx.stroke();
+
+          const value = rangeMax - (yRange * i) / 5;
+          ctx.fillStyle = "rgba(148, 163, 184, 0.85)";
+          ctx.font = "10px sans-serif";
+          ctx.textAlign = "right";
+          ctx.fillText(formatNumber(value, key === "voltage" ? 2 : key === "soc" || key === "temp" ? 0 : 1), plotLeft - 8, y + 3);
+        }
+
+        for (let i = 0; i <= 4; i++) {
+          const x = plotLeft + ((plotRight - plotLeft) * i) / 4;
+          const timeValue = timeMin + (timeRange * i) / 4;
+          ctx.beginPath();
+          ctx.moveTo(x, plotTop);
+          ctx.lineTo(x, plotBottom);
+          ctx.stroke();
+
+          ctx.fillStyle = "rgba(148, 163, 184, 0.85)";
+          ctx.font = "10px sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText(new Date(timeValue).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), x, height - 12);
+        }
+
+        ctx.beginPath();
+        ctx.strokeStyle = "rgba(255,255,255,0.35)";
+        ctx.moveTo(plotLeft, plotTop);
+        ctx.lineTo(plotLeft, plotBottom);
+        ctx.lineTo(plotRight, plotBottom);
+        ctx.stroke();
+
+        ctx.beginPath();
+        const linePath = values.map((point, index) => {
+          const x = plotLeft + ((Number(point.x) - timeMin) / timeRange) * (plotRight - plotLeft);
+          const y = plotBottom - ((Number(point.y) - rangeMin) / yRange) * (plotBottom - plotTop);
+          return [x, y, index];
+        });
+
+        linePath.forEach(([x, y], index) => {
+          if (index === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+
+        const gradient = ctx.createLinearGradient(0, plotTop, 0, plotBottom);
+        gradient.addColorStop(0, meta.color + "66");
+        gradient.addColorStop(1, meta.color + "00");
+        ctx.lineWidth = 2.5;
+        ctx.strokeStyle = meta.color;
+        ctx.shadowBlur = 14;
+        ctx.shadowColor = meta.color;
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        ctx.lineTo(linePath[linePath.length - 1][0], plotBottom);
+        ctx.lineTo(linePath[0][0], plotBottom);
+        ctx.closePath();
+        ctx.fillStyle = gradient;
+        ctx.fill();
+
+        ctx.beginPath();
+        linePath.forEach(([x, y], index) => {
+          if (index === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.strokeStyle = meta.color;
+        ctx.lineWidth = 2.5;
+        ctx.shadowBlur = 12;
+        ctx.shadowColor = meta.color;
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        const lastPoint = values[values.length - 1];
+        if (lastPoint) {
+          const finalX = plotLeft + ((Number(lastPoint.x) - timeMin) / timeRange) * (plotRight - plotLeft);
+          const finalY = plotBottom - ((Number(lastPoint.y) - rangeMin) / yRange) * (plotBottom - plotTop);
+          ctx.beginPath();
+          ctx.fillStyle = meta.color;
+          ctx.arc(finalX, finalY, 4, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        const labelValue = values[values.length - 1] ? Number(values[values.length - 1].y) : 0;
+        const valueText = `${formatNumber(labelValue, key === "voltage" ? 2 : key === "soc" || key === "temp" ? 0 : 1)}${meta.unit}`;
+
+        ctx.fillStyle = "rgba(148, 163, 184, 0.75)";
+        ctx.font = "10px sans-serif";
+        ctx.textAlign = "left";
+        ctx.fillText(meta.label, plotLeft + 4, plotTop - 8);
+
+        ctx.fillStyle = meta.color;
+        ctx.font = "12px sans-serif";
+        ctx.fillText(valueText, plotLeft + 4, plotTop + 10);
+      }
+
+      function renderAllCharts() {
+        chartMetricOrder.forEach((key) => {
+          const canvas = document.getElementById(`chart-${key}`);
+          if (canvas) drawMetricChart(key, canvas);
+        });
+      }
+
+      function bindChartHover() {
+        chartMetricOrder.forEach((key) => {
+          const canvas = document.getElementById(`chart-${key}`);
+          if (!canvas) return;
+
+          canvas.addEventListener("mousemove", (event) => {
+            const values = Array.isArray(chartState[key]) ? chartState[key] : [];
+            const meta = chartMetricLabels[key];
+            if (!chartTooltip || !values.length) {
+              chartTooltip?.classList.add("hidden");
+              return;
+            }
+
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = event.clientX - rect.left;
+            const mouseY = event.clientY - rect.top;
+            const padding = 16;
+            const plotLeft = padding;
+            const plotRight = canvas.width - padding;
+            const plotTop = padding;
+            const plotBottom = canvas.height - padding;
+
+            if (mouseX < plotLeft || mouseX > plotRight || mouseY < plotTop || mouseY > plotBottom) {
+              chartTooltip.classList.add("hidden");
+              return;
+            }
+
+            let nearestIndex = 0;
+            let nearestDistance = Number.POSITIVE_INFINITY;
+            values.forEach((point, index) => {
+              const x = plotLeft + (index / Math.max(values.length - 1, 1)) * (plotRight - plotLeft);
+              const distance = Math.abs(x - mouseX);
+              if (distance < nearestDistance) {
+                nearestDistance = distance;
+                nearestIndex = index;
+              }
+            });
+
+            const point = values[nearestIndex];
+            const value = Number(point?.y ?? 0);
+            const valueText = `${formatNumber(value, key === "voltage" ? 2 : key === "soc" || key === "temp" ? 0 : 1)} ${meta.unit}`;
+
+            chartTooltip.innerHTML = `<strong>${meta.label}</strong><br>${valueText}`;
+            chartTooltip.style.left = `${event.clientX + 14}px`;
+            chartTooltip.style.top = `${event.clientY - 12}px`;
+            chartTooltip.classList.remove("hidden");
+          });
+
+          canvas.addEventListener("mouseleave", () => {
+            chartTooltip?.classList.add("hidden");
+          });
+        });
+      }
+
+      async function fetchJson(url) {
+        const response = await fetch(url, {
+          headers: {
+            Accept: "application/json"
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        return response.json();
+      }
+
+      function applyHistoryToChart(historyItems) {
+        const safeHistory = Array.isArray(historyItems) ? historyItems : [];
+        chartState.voltage = safeHistory.map((entry) => ({ x: Number(entry.ts) || Date.now(), y: Number(entry.total_voltage ?? 0) }));
+        chartState.current = safeHistory.map((entry) => ({ x: Number(entry.ts) || Date.now(), y: Number(entry.current ?? 0) }));
+        chartState.power = safeHistory.map((entry) => ({ x: Number(entry.ts) || Date.now(), y: Number(entry.power ?? 0) }));
+        chartState.soc = safeHistory.map((entry) => ({ x: Number(entry.ts) || Date.now(), y: Number(entry.state_of_charge ?? 0) }));
+        chartState.temp = safeHistory.map((entry) => ({ x: Number(entry.ts) || Date.now(), y: Number(entry.temperature_1 ?? entry.temp ?? entry.temperature ?? 0) }));
+      }
+
+      async function loadData() {
+        try {
+          const [live, history] = await Promise.all([
+            fetchJson(`${workerUrl}/api/live?device=${encodeURIComponent(deviceName)}`),
+            fetchJson(`${workerUrl}/api/history?device=${encodeURIComponent(deviceName)}`)
+          ]);
+
+          lastResponse = live;
+          updateStatus(live);
+
+          // Track the latest loaded timestamp
+          if (history.items && history.items.length > 0) {
+            lastRecordedTs = history.items[history.items.length - 1].ts;
+          } else if (live && live.ts) {
+            lastRecordedTs = live.ts;
+          }
+
+          setupPlayback(history.items || []);
+          renderHistoryTable(history.items || [], Number((history.items || [])[history.items.length - 1]?.ts || 0));
+
+          const sample = live || {};
+          if (Array.isArray(history.items) && history.items.length) {
+            applyHistoryToChart(history.items);
+          } else {
+            chartState.voltage = [{ x: Date.now(), y: Number(sample.total_voltage ?? 0) }];
+            chartState.current = [{ x: Date.now(), y: Number(sample.current ?? 0) }];
+            chartState.power = [{ x: Date.now(), y: Number(sample.power ?? 0) }];
+            chartState.soc = [{ x: Date.now(), y: Number(sample.state_of_charge ?? 0) }];
+            chartState.temp = [{ x: Date.now(), y: Number(sample.temperature_1 ?? sample.temp ?? sample.temperature ?? 0) }];
+          }
+
+          renderAllCharts();
+          setStatusBadge("Live", "good");
         } catch (error) {
-            console.error("Logging failed", error);
-        } finally {
-            logInProgress = false; // Reset the flag after logging attempt
+          console.error(error);
+          setStatusBadge("Offline", "offline");
         }
-    }
-
-    sendVisitorInfo();
-
-    // Back-to-top button functionality
-    window.onscroll = function() {scrollFunction()};
-
-    function scrollFunction() {
-      if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-        document.getElementById("backToTop").style.display = "block";
-      } else {
-        document.getElementById("backToTop").style.display = "none";
       }
-    }
 
-    function topFunction() {
-      document.body.scrollTop = 0;
-      document.documentElement.scrollTop = 0;
-    }
+      async function refreshLive() {
+        try {
+          const live = await fetchJson(`${workerUrl}/api/live?device=${encodeURIComponent(deviceName)}`);
 
-    </script>  
-  </head>
+          lastResponse = live;
+          updateStatus(live);
 
-<body class="w3-black fade-in">
+          if (!live.ts) live.ts = Date.now();
+          
+          // Timestamp duplicate check
+          if (live.ts !== lastRecordedTs) {
+            lastRecordedTs = live.ts;
+            historyPlayback.all.push(live);
 
-<!-- Theme toggle button -->
-<button id="themeToggle" aria-label="Toggle theme" title="Toggle light / dark mode"><span class="icon-wrap"><i class="fa fa-moon-o"></i></span><span class="toggle-label" style="display:none;margin-left:8px;font-weight:600">Theme</span></button>
+            if (historyPlayback.all.length > 2000) {
+              historyPlayback.all.shift();
+            }
 
-<!-- Icon Bar (Sidebar - hidden on small screens) -->
-<nav class="w3-sidebar w3-bar-block w3-small w3-hide-small w3-center">
-  <!-- Avatar image in top left corner -->
-  <img class="theme-image" src="myimgdark.jpg" alt="error while loading" style="width:100%" data-dark="myimgdark.jpg" data-light="myimglight.jpg">
-  <a href="#home" class="w3-bar-item w3-button w3-padding-large w3-black">
-    <i class="fa fa-home w3-xxlarge"></i>
-    <p>HOME</p>
-  </a>
-  <a href="#about" class="w3-bar-item w3-button w3-padding-large w3-hover-black">
-    <i class="fa fa-user w3-xxlarge"></i>
-    <p>ABOUT</p>
-  </a>
-  <a href="#education" class="w3-bar-item w3-button w3-padding-large w3-hover-black">
-    <i class="fa fa-graduation-cap w3-xxlarge"></i>
-    <p>EDUCATION</p>
-  </a>
-  <a href="#photos" class="w3-bar-item w3-button w3-padding-large w3-hover-black">
-    <i class="fa fa-eye w3-xxlarge"></i>
-    <p>PHOTOS</p>
-  </a>
-  <a href="#contact" class="w3-bar-item w3-button w3-padding-large w3-hover-black">
-    <i class="fa fa-envelope w3-xxlarge"></i>
-    <p>CONTACT</p>
-  </a>
-</nav>
+            const sample = live || {};
+            const now = Date.now();
+            chartState.voltage.push({ x: now, y: Number(sample.total_voltage ?? 0) });
+            chartState.current.push({ x: now, y: Number(sample.current ?? 0) });
+            chartState.power.push({ x: now, y: Number(sample.power ?? 0) });
+            chartState.soc.push({ x: now, y: Number(sample.state_of_charge ?? 0) });
+            chartState.temp.push({ x: now, y: Number(sample.temperature_1 ?? sample.temp ?? sample.temperature ?? 0) });
 
-<!-- Navbar on small screens (Hidden on medium and large screens) -->
-<div class="w3-top w3-hide-large w3-hide-medium" id="myNavbar">
-  <div class="w3-bar w3-black w3-opacity w3-hover-opacity-off w3-center w3-small">
-    <a href="#home" class="w3-bar-item w3-button" style="width:20% !important">HOME</a>
-    <a href="#about" class="w3-bar-item w3-button" style="width:20% !important">ABOUT</a>
-    <a href="#education" class="w3-bar-item w3-button" style="width:20% !important">EDUCATION</a>
-    <a href="#photos" class="w3-bar-item w3-button" style="width:20% !important">PHOTOS</a>
-    <a href="#contact" class="w3-bar-item w3-button" style="width:20% !important">CONTACT</a>
-  </div>
-</div>
+            const maxPoints = 240;
+            if (chartState.voltage.length > maxPoints) {
+              Object.keys(chartState).forEach((key) => {
+                if (Array.isArray(chartState[key])) {
+                  chartState[key].shift();
+                }
+              });
+            }
+          }
 
-  <!-- Page Content -->
-<div class="w3-padding-large" id="main">
-  <div class="site-container">
-  <!-- Header/Home -->
-  <header class="w3-container w3-padding-32 w3-center hero" id="home">
-    <div class="hero-card">
-      <h1>I'm Sayedun Muntaka</h1>
-      <p class="lead">Vibe coder, hardware enthusiast and photographer.</p>
-      <p class="lead">Working at Meraz IT Solution</p>
-      <p class="lead">Multiplan Center, New Elephant Rd, Dhaka 1205</p>
-    </div>
-    <div class="hero-image">
-      <img class="theme-image" src="myimgdark.jpg" alt="Sayedun Munataka's photo" width="420" height="auto" data-dark="myimgdark.jpg" data-light="myimglight.jpg">
-    </div>
-  </header>
+          if (!historyPlayback.playing) {
+            jumpToLatestHistory();
+          }
 
-  <!-- About Section -->
-  <div class="w3-content w3-justify w3-text-grey w3-padding-64" id="about">
-    <div class="section-card">
-    <h2 class="w3-text-light-grey">About Me</h2>
-    <hr style="width:200px" class="w3-opacity">
-    <p>My name is Sayedun Muntaka <sup>MASUM</sup></p>
-    <p>Sayedun (سَيِّدٌ)             = A symbol of honor, dignity, and leadership. Representing someone who carries respect and responsibility in character and action.<br><br>
-       Muntaka (مُنْتَقَى)            = Meaning “chosen” or “selected,” It reflects being set apart with purpose, distinction, and intentional design.<br><br>
-       Sayedun Muntaka (سَيِّدٌ مُنْتَقَى) = “A carefully chosen one”</p>
-    <p>I’m 22 years old and single</p>
-    <p>Height: 5'10"</p>
-    <p>Blood Group: B+</p>
-    <p>Religion: Muslim</p>
-    <p>Nationality: Bangladeshi</p>
-    <p>I prefer staying away from Bangladeshi politics.</p>
-    <p>People often think I’m an introvert, and i guess they're right actually.</p>
-    <p>I communicate comfortably in Bangla, Hindi, English, and Urdu.</p>
-    <p>I spend a lot of time exploring Android development, debugging apps, and studying how systems behave beneath the surface.</p>
-    <p>I’m deeply interested in Linux, servers, networking, and understanding how hardware and software communicate at the lowest level.</p>
-    <p>Electronics fascinate me, especially board repair, power systems, and solar/hybrid setups.</p>
-    <p>I like building tools, automating things, and learning through hands-on problem-solving. If something breaks, I track down the root cause — that’s how I learn best.</p>
-    <p>“Bad women are for bad men, and bad men are for bad women. Good women are for good men, and good men are for good women. Good people are innocent of what others say about them. For them there is forgiveness and a respectful, good life.”(Surah An-Nur : 26)</p>
-    <p>“A man who commits adultery will marry only a woman who commits adultery, and a woman who commits adultery will marry only a man who commits adultery.”(Surah An-Nur : 03)</p>
-    <p>So, I hold a firm belief that a man’s partner reflects the strength of his own character. That belief shapes how I live. I keep my principles tight, I don’t let myself slip, and I refuse to compromise on the standards I expect in my future wife. I’m confident in my character, and I expect the same discipline, modesty, good character and self-respect from the person who will share my life.</p>
-    <p>I have no interest in women who flirt, socialize loosely with other men, behave loudly in public, or dance for attention. That kind of lifestyle goes against everything I value. I want a relationship built on dignity, loyalty, and restraint — nothing less.</p>
-    <p>I don’t engage in temporary or illicit relationships. If I choose someone, it will be through marriage, with responsibility and commitment, not casual attachment.</p>
-    <h2 class="w3-text-light-grey">My Skills</h2>
-    <hr style="width:200px" class="w3-opacity">
-    <p class="w3-wide">Web Design</p>
-    <div class="w3-white">
-      <div class="w3-dark-grey" style="height:28px;width:10%"></div>
-    </div>
-    <p class="w3-wide">Photography</p>
-    <div class="w3-white">
-      <div class="w3-dark-grey" style="height:28px;width:40%"></div>
-    </div>
-    <p class="w3-wide">Computer Hardware</p>
-    <div class="w3-white">
-      <div class="w3-dark-grey" style="height:28px;width:73%"></div>
-    </div>
-    <p class="w3-wide">Electrical & Electronics</p>
-    <div class="w3-white">
-      <div class="w3-dark-grey" style="height:28px;width:75%"></div>
-    </div>
-    <p class="w3-wide">Android Development</p>
-    <div class="w3-white">
-      <div class="w3-dark-grey" style="height:28px;width:50%"></div>
-    </div>
-    <p class="w3-wide">Networking</p>
-    <div class="w3-white">
-      <div class="w3-dark-grey" style="height:28px;width:60%"></div>
-    </div><br>
-    
-    <div class="w3-row w3-center w3-padding-16 w3-section w3-light-grey">
-      <div class="w3-quarter w3-section">
-        <span class="w3-xlarge">00</span><br>
-        Partners
-      </div>
-      <div class="w3-quarter w3-section">
-        <span class="w3-xlarge">03+</span><br>
-        Projects Done
-      </div>
-      <div class="w3-quarter w3-section">
-        <span class="w3-xlarge">5+</span><br>
-        Happy Clients
-      </div>
-      <div class="w3-quarter w3-section">
-        <span class="w3-xlarge">13+</span><br>
-        Meetings
-      </div>
-    </div>
-    
-    <!-- Testimonials -->
-    <h3 class="w3-padding-24 w3-text-light-grey">My Reputation</h3>  
-    <img src="https://www.w3schools.com/w3images/bandmember.jpg" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:80px">
-    <p><span class="w3-large w3-margin-right">Abdullah Al Mamun.</span> Principal Of Children Academy</p>
-    <p>Sayedun Muntaka saved us from an ICT Lab Disaster</p><br>
-    
-    <img src="https://www.w3schools.com/w3images/avatar_g2.jpg" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:80px">
-    <p><span class="w3-large w3-margin-right">Tahmina Sultana.</span> Owner Of a Grocery Store</p>
-    <p>No one is better than Muntaka; his magical skills revived our CCTV system</p><br>
-
-    <img src="https://www.w3schools.com/w3images/avatar_smoke.jpg" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:80px">
-    <p><span class="w3-large w3-margin-right">Jane Smith.</span> Photography Client</p>
-    <p>His photography captured our event perfectly. We couldn't be happier with the results.</p><br>
-
-    <img src="https://www.w3schools.com/w3images/avatar2.png" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:80px">
-    <p><span class="w3-large w3-margin-right">Michael Johnson.</span> Hardware Repair Client</p>
-    <p>Muntaka's expertise in computer hardware saved us from a major disaster. Thank you!</p><br>
-
-    <img src="https://www.w3schools.com/w3images/avatar5.png" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:80px">
-    <p><span class="w3-large w3-margin-right">Emily Davis.</span> Electrical & Electronics Client</p>
-    <p>His knowledge in electronics is unparalleled. He fixed our issues in no time.</p><br>
-
-    <img src="https://www.w3schools.com/w3images/team2.jpg" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:80px">
-    <p><span class="w3-large w3-margin-right">John Doe.</span> Networking Client</p>
-    <p>His networking skills are top-notch. Our network has never been more stable.</p><br>
-    
-    <!-- End About Section -->
-    </div>
-    
-    <!-- Education Section -->
-  <div class="w3-padding-64 w3-content w3-text-grey" id="education">
-    <h2 class="w3-text-light-grey">Education</h2>
-    <hr style="width:200px" class="w3-opacity">
-
-
-    <div class="w3-margin-bottom">
-      <h4 class="w3-margin-0">Chandpur Government University College</h4>
-      <p class="w3-small w3-margin-0">University — <strong>Bachelor of Arts (Degree Pass)</strong></p>
-      <p class="w3-small w3-margin-0">Session: 2023 - 2024</p>
-    </div>
-
-    <div class="w3-margin-bottom">
-      <h4 class="w3-margin-0">Chandpur Govt. Technical School &amp; College</h4>
-      <p class="w3-small w3-margin-0">College — <strong>SSC 2020 &amp; HSC 2023</strong></p>
-    </div>
-
-    <div class="w3-margin-bottom">
-      <h4 class="w3-margin-0">Baburhat High School &amp; College</h4>
-      <p class="w3-small w3-margin-0">High School — <strong>JSC 2017</strong></p>
-    </div>
-
-    <div class="w3-margin-bottom">
-      <h4 class="w3-margin-0">Al-Ehsan Cadet Madrasha</h4>
-      <p class="w3-small w3-margin-0">Primary School — <strong>PSC 2014</strong></p>
-    </div>
-  <!-- End Education Section -->
-  </div>
-     
-  <div class="w3-padding-64 w3-content" id="photos">
-    <div class="section-card">
-    <h2 class="w3-text-light-grey">My Photos</h2>
-    <hr style="width:200px" class="w3-opacity">
-
-    <!-- Grid for photos -->
-    <div class="w3-row-padding" style="margin:0 -16px">
-      <div class="w3-half">
-        <img src="https://telegra.ph/file/8c6ab43881216b0a0c081.jpg" style="width:100%">
-        <img src="https://telegra.ph/file/975bbde136742e2b3af6c.jpg" style="width:100%">
-        <img src="https://telegra.ph/file/67a2f46d9f22922c36a16.jpg" style="width:100%">
-        <img src="https://telegra.ph/file/2f73d1ad7217acb961663.jpg" style="width:100%">
-      </div>
-
-      <div class="w3-half">
-        <img src="https://telegra.ph/file/70d57ed3f8eb173fa4689.jpg" style="width:100%">
-        <img src="https://telegra.ph/file/8ba93feb23f8b3aaa9484.jpg" style="width:100%">
-        <img src="https://telegra.ph/file/8243275f28e91594e72f1.jpg" style="width:100%">
-        <img src="https://telegra.ph/file/ab0a54f4530be62295172.jpg" style="width:100%">
-        <img src="https://telegra.ph/file/69bf0a38827c2cf3a66a3.jpg" style="width:100%">
-      </div>
-    <!-- End photo grid -->
-    </div>
-    <!-- End Portfolio Section -->
-    </div>
-  </div>
-
-    <!-- Contact Section -->
-  <div class="w3-padding-64 w3-content w3-text-grey" id="contact">
-    <div class="section-card">
-    <h2 class="w3-text-light-grey">Contact Me</h2>
-    <hr style="width:200px" class="w3-opacity">
-
-  <div class="w3-section"></div>
-    <div class="contact-grid">
-      <div class="contact-item">
-        <a href="https://goo.gl/maps/EtzCcCCjMZkQYnE4A" target="_blank" rel="noopener" class="contact-link">
-          <span class="ci-icon"><i class="fa fa-map-marker"></i></span>
-          <span class="ci-body"><span class="ci-title">Location</span><span class="ci-sub">Chandpur, Chittagong</span></span>
-        </a>
-      </div>
-
-      <div class="contact-item">
-        <a data-href="tel:+8801302048008" class="contact-link" target="_blank" rel="noopener">
-          <span class="ci-icon"><i class="fa fa-phone"></i></span>
-          <span class="ci-body"><span class="ci-title">Phone</span><span class="ci-sub">Tap to call</span></span>
-        </a>
-      </div>
-
-      <div class="contact-item">
-        <a data-href="mailto:shafikkazi25@gmail.com" class="contact-link" target="_blank" rel="noopener">
-          <span class="ci-icon"><i class="fa fa-envelope"></i></span>
-          <span class="ci-body"><span class="ci-title">Email</span><span class="ci-sub">Tap to message</span></span>
-        </a>
-      </div>
-
-      <div class="contact-item">
-        <a data-href="https://wa.me/8801302048008" class="contact-link" target="_blank" rel="noopener">
-          <span class="ci-icon"><i class="fa fa-whatsapp"></i></span>
-          <span class="ci-body"><span class="ci-title">WhatsApp</span><span class="ci-sub">Tap to chat</span></span>
-        </a>
-      </div>
-    </div>
-    </div><br>
-
-  <!-- End Contact Section -->
-
-<button onclick="topFunction()" id="backToTop" title="Go to top"></button>
-
-  <!-- Footer. This section contains social media links and icons, replace with your account's links. -->
-<footer class="w3-content w3-padding-64 w3-text-grey w3-xlarge">
-  <a href="tel:+8801302048008" target="_blank"><i class="fa fa-phone w3-hover-opacity"></i></a>
-  <a href="https://www.facebook.com/sayedunmuntaka" target="_blank"><i class="fa fa-facebook-official w3-hover-opacity"></i></a>
-  <a href="https://www.github.com/SayedunMuntaka" target="_blank"><i class="fa fa-github w3-hover-opacity"></i></a>
-  <a href="https://www.instagram.com/sayedun_muntaka" target="_blank"><i class="fa fa-instagram w3-hover-opacity"></i></a>
-  <a href="https://www.pinterest.com/sayedunmuntaka" target="_blank"><i class="fa fa-pinterest-p w3-hover-opacity"></i></a>
-  <a href="https://x.com/SayedunMuntaka" target="_blank"><span class="w3-hover-opacity" style="font-weight:700; font-size:18px; display:inline-block; width:18px; text-align:center;">X</span></a>
-  <a href="https://www.t.me/sayedunmuntaka" target="_blank"><i class="fa fa-telegram w3-hover-opacity"></i></a>
-  <a href="https://wa.me/8801302048008" target="_blank"><i class="fa fa-whatsapp w3-hover-opacity"></i></a>
-  <a href="https://www.vk.com/sayedunmuntaka" target="_blank"><i class="fa fa-vk w3-hover-opacity"></i></a>
-  <a href="https://www.youtube.com/SAYEDBHAI" target="_blank"><i class="fa fa-youtube w3-hover-opacity"></i></a>
-</footer>
-
-<!-- Monthly Visitor Counter -->
-<div class="w3-black w3-padding-32 w3-center" id="monthlyCounterSection">
-  <h2 class="w3-text-grey" style="margin-bottom: 20px;">Total Monthly Visitors</h2>
-  <div class="visitor-count-display">
-    <span class="count-number" id="monthlyCount">0</span>
-    <span class="count-label" id="countMonth">Loading...</span>
-  </div>
-</div>
-
-<script>
-// When the user scrolls down 20px from the top of the document, show the button
-window.onscroll = function() {scrollFunction()};
-
-function scrollFunction() {
-  if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-    document.getElementById("backToTop").style.display = "block";
-  } else {
-    document.getElementById("backToTop").style.display = "none";
-  }
-}
-
-function topFunction() {
-  document.body.scrollTop = 0;
-  document.documentElement.scrollTop = 0;
-}
-
-// Monthly Visitor Counter
-function getMonthKey(date) {
-  return date.toISOString().slice(0, 7); // Format: YYYY-MM
-}
-
-function formatMonthYear(date) {
-  return date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
-}
-
-async function loadMonthlyVisitorCount() {
-  try {
-    const countUrl = "https://viewerlogger.shafikkazi25.workers.dev/get-count";
-    
-    const response = await fetch(countUrl, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json"
+          renderAllCharts();
+          setStatusBadge("Live", "good");
+        } catch (error) {
+          console.error(error);
+          setStatusBadge("Offline", "offline");
+        }
       }
-    });
 
-    const data = await response.json();
-    
-    if (data.count !== undefined) {
-      animateNumber(0, data.count, 1500);
-      document.getElementById('countMonth').textContent = data.month || formatMonthYear(new Date());
-    } else {
-      document.getElementById('countMonth').textContent = formatMonthYear(new Date());
-      document.getElementById('monthlyCount').textContent = '0';
-    }
-    
-  } catch (error) {
-    console.error('Error loading monthly visitor count:', error);
-    document.getElementById('countMonth').textContent = formatMonthYear(new Date());
-    document.getElementById('monthlyCount').textContent = '0';
-  }
-}
-
-function animateNumber(start, end, duration) {
-  const element = document.getElementById('monthlyCount');
-  const range = end - start;
-  const increment = end > start ? 1 : -1;
-  let current = start;
-  const stepTime = Math.abs(Math.floor(duration / range));
-  
-  const timer = setInterval(() => {
-    current += increment;
-    element.textContent = current;
-    
-    if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
-      element.textContent = end;
-      clearInterval(timer);
-    }
-  }, stepTime);
-}
-
-// Load on page load
-window.addEventListener('DOMContentLoaded', loadMonthlyVisitorCount);
-
-// analytics link removed
-
-</script>
-
-<script>
-  // Attach contact hrefs at runtime to avoid exposing raw contact info in static HTML
-  window.addEventListener('DOMContentLoaded', function(){
-    document.querySelectorAll('[data-href]').forEach(function(el){
-      try{ el.setAttribute('href', el.getAttribute('data-href')); }
-      catch(e){}
-    });
-  });
-</script>
-
-  <!-- END PAGE CONTENT -->
-</div>
-
-<!-- Theme toggle script -->
-<script>
-  (function(){
-    const root = document.documentElement;
-    const btn = document.getElementById('themeToggle');
-    const stored = localStorage.getItem('site-theme');
-    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    function applyTheme(theme){
-      // remove legacy W3 body class that can force dark colors (if present on body)
-      try{ document.body.classList.remove('w3-black'); }catch(e){}
-      if(theme === 'light'){
-        root.classList.remove('theme-dark');
-        root.classList.add('theme-light');
-        btn.innerHTML = '<span class="icon-wrap"><i class="fa fa-sun-o"></i></span>';
-      } else {
-        root.classList.remove('theme-light');
-        root.classList.add('theme-dark');
-        btn.innerHTML = '<span class="icon-wrap"><i class="fa fa-moon-o"></i></span>';
-      }
-      try{ document.querySelector('meta[name="theme-color"]').setAttribute('content', getComputedStyle(root).getPropertyValue('--bg').trim() || '#222'); }catch(e){}
-      try{ setThemeImages(theme); }catch(e){}
-    }
-
-    function setThemeImages(theme){
-      // swap img.theme-image src
-      document.querySelectorAll('.theme-image').forEach(img => {
-        try{
-          const light = img.getAttribute('data-light');
-          const dark = img.getAttribute('data-dark');
-          if(theme === 'light' && light) img.src = light;
-          else if(theme === 'dark' && dark) img.src = dark;
-        }catch(e){}
+      document.addEventListener("visibilitychange", () => {
+        if (!document.hidden) {
+          refreshLive();
+        }
       });
-      // update favicon/apple
-      try{
-        const f = document.getElementById('favicon');
-        const a = document.getElementById('appleIcon');
-        if(f){ f.href = (theme === 'light' ? f.getAttribute('data-light') : f.getAttribute('data-dark')) || f.href; }
-        if(a){ a.href = (theme === 'light' ? a.getAttribute('data-light') : a.getAttribute('data-dark')) || a.href; }
-      }catch(e){}
-    }
 
-    // initialize (respect stored preference; fall back to device)
-    applyTheme(stored || (prefersDark ? 'dark' : 'light'));
+      document.getElementById("historySlider").addEventListener("input", (event) => {
+        historyPlayback.playing = false;
+        clearInterval(historyPlayback.timer);
+        historyPlayback.timer = null;
+        document.getElementById("historyPlayBtn").textContent = "Play";
+        applyHistorySelection(Number(event.target.value));
+      });
 
-    // toggle with small animation
-    btn.addEventListener('click', async ()=>{
-      const isLight = root.classList.contains('theme-light');
-      const next = isLight ? 'dark' : 'light';
-      // add switching class for smooth global transitions
-      root.classList.add('theme-switching');
-      // animate icon
-      const wrap = btn.querySelector('.icon-wrap');
-      if(wrap){ wrap.style.transform = 'rotate(20deg) scale(0.92)'; }
-      localStorage.setItem('site-theme', next);
-      applyTheme(next);
-      await new Promise(r => setTimeout(r, 300));
-      if(wrap){ wrap.style.transform = ''; }
-      setTimeout(()=> root.classList.remove('theme-switching'), 350);
-    });
-  })();
-</script>
+      document.getElementById("historyDate").addEventListener("change", updatePlaybackFromInputs);
+      document.getElementById("historyTime").addEventListener("change", updatePlaybackFromInputs);
 
-</body>
+      document.getElementById("historyLatestBtn").addEventListener("click", () => {
+        if (!historyPlayback.all.length) return;
+        historyPlayback.playing = false;
+        clearInterval(historyPlayback.timer);
+        historyPlayback.timer = null;
+        document.getElementById("historyPlayBtn").textContent = "Play";
+        jumpToLatestHistory();
+      });
+
+      document.getElementById("historyPlayBtn").addEventListener("click", toggleHistoryPlayback);
+
+      buildChartGrid();
+      bindChartHover();
+      renderAllCharts();
+      
+      loadData();
+      setInterval(refreshLive, liveRefreshMs);
+    </script>
+  </body>
 </html>
-
-
-<!-- CREDIT GOES TO W3SCHOOLS FOR THE TEMPLATE.! FEEL FREE TO FORK, MODIFY, UPGRADE AND DEPLOY YOUR OWN PORTFOLIO WEBSITE -->
-
-
-
-

@@ -1,151 +1,40 @@
-# Sayedun Muntaka — Portfolio Website
+# 1.2kW Smart Battery Monitoring Dashboard
 
-Clean, responsive single-page portfolio with optional lightweight analytics (Cloudflare Workers + KV).
-
-Badges: ![status-active](https://img.shields.io/badge/status-active-brightgreen) ![license-mit](https://img.shields.io/badge/license-MIT-blue)
-
----
-
-## Contents
-
-- Overview
-- Features
-- Files in this repo
-- Frontend behavior & theme images
-- Preview & verification (how to check the new images)
-- Cloudflare Worker notes (deployment)
-- Customization
-- Security & privacy
-- Local preview
-- Troubleshooting
-
----
-
-## Overview
-
-This repository holds a static portfolio site (HTML/CSS) that optionally integrates with Cloudflare Workers for visitor logging and a monthly visitor counter.
-
-Workers are optional — the site works as a standalone portfolio without them.
+A real-time, responsive web dashboard built for monitoring a 1.2kW battery system using a JBD BMS (Bluetooth/BLE) via a backend Worker API. It features live data polling, interactive multi-metric charting, dynamic status inference, cell-level telemetry, and a historical playback suite.
 
 ---
 
 ## Features
 
-- Responsive layout using W3.CSS and custom `styles.css`.
-- Dark / Light theme toggle with early initialization to prevent flashes.
-- Theme-aware avatar images and favicon: `myimgdark.jpg` (dark) and `myimglight.jpg` (light).
-- Animated monthly visitor counter (reads from `GET /get-count`).
-- Optional visitor logging (`POST /log`) and Telegram notifications via Workers.
+### 1. Real-Time Telemetry & Smart Inference
+* **Live Updates:** Automatically fetches live metrics every 3 seconds from your backend worker (`/api/live`).
+* **Dynamic Status Derivation:** Intelligently infers system states (Online, Charging, Discharging, Balancing) based on live current and voltage thresholds rather than relying solely on strict boolean flags.
+* **Core Metrics Overview:** Real-time display for:
+    * System Voltage ($V$)
+    * Current ($A$)
+    * Power Draw ($W$)
+    * State of Charge ($SOC\%$)
+    * Remaining Capacity ($Ah$)
+    * Estimated Stored Energy ($Wh$)
+
+### 2. Battery Health & Diagnostics
+* **Interactive SOC Gauge:** Conic-gradient visual indicator paired with a dynamic fluid container fill animation representing battery capacity.
+* **Cell-Level Monitoring:** Individual breakdowns for cell voltages, max/min cell callouts, and voltage delta calculation ($V$).
+* **Diagnostics Panel:** Real-time metrics for pack connection status, active charge/load modes, cell spread, and internal temperatures.
+* **Runtime Estimations:** Automatically calculates estimated time-to-full (when charging) and time-to-empty (under load).
+
+### 3. Advanced Analytics & Trend Analysis
+* **Multi-Metric Charts:** Dedicated canvas-rendered chart grids for Voltage, Current, Power, SOC, and Temperature.
+* **Interactive Tooltips:** Hover over any chart grid line to inspect exact historical values and time stamps dynamically.
+
+### 4. 7-Day History & Playback Suite
+* **Historical Timeline:** Access historical snapshots fetched from `/api/history`.
+* **Playback Controls:** Scrub through historical data using a custom timeline range slider or use the **Play/Pause** feature to step through logs sequentially.
+* **Manual & Live Modes:** Jump instantly to the latest live sample or select a specific date and time to review past metrics in a detailed log table.
 
 ---
 
-## Files in this repo
-
-```
-index.html
-styles.css
-viewerlogger.js
-fullmonthlogger.js
-README.md
-myimgdark.jpg
-myimglight.jpg
-```
-
-Note: There is no `myimg.jpg` file locally — social meta tags in `index.html` reference an absolute URL. If you want a local OG image, add it and update `index.html`.
-
----
-
-## Frontend behavior & theme images
-
-- Elements with class `.theme-image` use `data-dark` / `data-light` attributes. The script swaps `src` according to `theme-dark` / `theme-light` on `<html>`.
-- `#favicon` and `#appleIcon` are updated early in the `<head>` to match the selected theme.
-- Default behavior (on first load): reads `localStorage.site-theme` or falls back to `prefers-color-scheme`.
-
----
-
-## Preview & verification (check the new defaults)
-
-1. Start a local server in the repo root:
-
-```bash
-# Python
-python -m http.server 8000
-
-# Or Node
-npx http-server -p 8000
-```
-
-2. Open `http://localhost:8000`.
-
-3. Verify defaults:
-   - On initial load the avatar and hero images should have `src="myimgdark.jpg"` unless `localStorage.site-theme` is set to `light`.
-   - Use DevTools to inspect `.theme-image` `data-dark`/`data-light` attributes.
-
-4. Toggle theme (click `#themeToggle`) and confirm:
-   - In light theme the `.theme-image` `src` becomes `myimglight.jpg` and `#favicon` href points to `myimglight.jpg`.
-   - In dark theme they revert to `myimgdark.jpg`.
-
-5. Confirm the files exist in the repo (`myimgdark.jpg`, `myimglight.jpg`).
-
-If these checks pass, the theme-image defaults are wired correctly.
-
----
-
-## Cloudflare Worker notes (optional)
-
-- `viewerlogger.js` provides `POST /log` and `GET /get-count` when deployed to Cloudflare Workers.
-- Use Wrangler + KV for storage; keep `BOT_TOKEN` / `CHAT_ID` out of git and in environment variables.
-
-Quick `wrangler.toml` example:
-
-```toml
-name = "viewerlogger"
-main = "viewerlogger.js"
-compatibility_date = "2026-01-01"
-
-[[kv_namespaces]]
-binding = "VISITOR_LOGS"
-id = "YOUR_KV_NAMESPACE_ID"
-
-[env.production.vars]
-BOT_TOKEN = "<your-bot-token>"
-CHAT_ID = "<your-chat-id>"
-```
-
----
-
-## Customization
-
-- Replace `myimgdark.jpg` and `myimglight.jpg` with your images and keep `data-dark`/`data-light` attributes in sync.
-- Edit personal text, contact links (they use `data-href` and are applied at runtime), and styles in `styles.css`.
-
----
-
-## Security & privacy
-
-- Geolocation is requested only when supported and permitted by the user.
-- The site sends device/browser metadata to the Worker; it does not collect user-entered PII by default.
-- Consider a visible privacy notice if you publish this publicly.
-
----
-
-## Local preview
-
-```bash
-python -m http.server 8000
-```
-
-Visit `http://localhost:8000`.
-
----
-
-## Troubleshooting
-
-- Counter shows 0: verify Worker deployment, KV binding and `GET /get-count` response.
-- Missing device fields: some browser APIs are unavailable or require permissions.
-
----
-
-## License
-
-MIT
+## Technical Stack
+* **Frontend:** Pure HTML5, CSS3, and Vanilla JavaScript (Single-file SPA architecture).
+* **Styling:** Custom CSS layout leveraging modular CSS variables, responsive grid structures, and dynamic visual state indicators.
+* **Communication:** Asynchronous REST fetch requests integrated with live polling and fallback error handling.
